@@ -1,0 +1,64 @@
+<svg width="1400" height="900" viewBox="0 0 1400 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Real Estate Lead Generation Dashboard</title>
+  <desc id="desc">A dark navy and gold dashboard visual showing Leads to Qualified Buyers to Site Visits to Bookings, with CPL range around six to seven dollars and qualitative audit states.</desc>
+  <rect width="1400" height="900" rx="34" fill="#05070D"/>
+  <rect x="36" y="36" width="1328" height="828" rx="28" fill="#07111F" stroke="#21314A" stroke-width="2"/>
+  <circle cx="1140" cy="78" r="210" fill="#D6A84F" opacity="0.08"/>
+  <circle cx="162" cy="774" r="250" fill="#D6A84F" opacity="0.06"/>
+
+  <text x="86" y="116" fill="#D6A84F" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="5">REAL ESTATE FUNNEL VISIBILITY</text>
+  <text x="86" y="170" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="54" font-weight="700">Property Lead Generation Dashboard</text>
+  <text x="88" y="214" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="24">Campaign review visual for lead quality, follow-up, and booking movement.</text>
+
+  <rect x="86" y="268" width="254" height="152" rx="18" fill="#0D1828" stroke="#21314A"/>
+  <text x="116" y="318" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="22">CPL Range</text>
+  <text x="116" y="374" fill="#F3D58A" font-family="Arial, sans-serif" font-size="48" font-weight="700">$6-7</text>
+  <text x="116" y="404" fill="#94A3B8" font-family="Arial, sans-serif" font-size="18">Campaign visibility preview</text>
+
+  <rect x="374" y="268" width="254" height="152" rx="18" fill="#0D1828" stroke="#21314A"/>
+  <text x="404" y="318" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="22">Lead Intent</text>
+  <text x="404" y="374" fill="#F3D58A" font-family="Arial, sans-serif" font-size="34" font-weight="700">Needs Review</text>
+  <text x="404" y="404" fill="#94A3B8" font-family="Arial, sans-serif" font-size="18">Quality before scaling</text>
+
+  <rect x="662" y="268" width="254" height="152" rx="18" fill="#0D1828" stroke="#21314A"/>
+  <text x="692" y="318" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="22">Site Visit Flow</text>
+  <text x="692" y="374" fill="#F3D58A" font-family="Arial, sans-serif" font-size="34" font-weight="700">Track Gap</text>
+  <text x="692" y="404" fill="#94A3B8" font-family="Arial, sans-serif" font-size="18">Follow-up to visit movement</text>
+
+  <rect x="950" y="268" width="330" height="152" rx="18" fill="#0D1828" stroke="#D6A84F" stroke-opacity="0.45"/>
+  <text x="980" y="318" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="22">Booking Readiness</text>
+  <text x="980" y="374" fill="#F3D58A" font-family="Arial, sans-serif" font-size="34" font-weight="700">Audit Required</text>
+  <text x="980" y="404" fill="#94A3B8" font-family="Arial, sans-serif" font-size="18">Review before scaling</text>
+
+  <rect x="86" y="488" width="1194" height="234" rx="22" fill="#0D1828" stroke="#21314A"/>
+  <text x="126" y="548" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="30" font-weight="700">Leads &#8594; Qualified Buyers &#8594; Site Visits &#8594; Bookings</text>
+
+  <g>
+    <rect x="126" y="600" width="220" height="72" rx="16" fill="#111F33" stroke="#D6A84F" stroke-opacity="0.38"/>
+    <text x="236" y="638" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="25" font-weight="700" text-anchor="middle" dominant-baseline="middle">Leads</text>
+
+    <circle cx="362" cy="636" r="8" fill="#D6A84F"/>
+    <path d="M376 636H392" stroke="#D6A84F" stroke-width="5" stroke-linecap="round"/>
+    <path d="M402 636L386 624V648L402 636Z" fill="#D6A84F"/>
+
+    <rect x="410" y="600" width="250" height="72" rx="16" fill="#111F33" stroke="#D6A84F" stroke-opacity="0.38"/>
+    <text x="535" y="638" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="24" font-weight="700" text-anchor="middle" dominant-baseline="middle">Qualified Buyers</text>
+
+    <circle cx="676" cy="636" r="8" fill="#D6A84F"/>
+    <path d="M690 636H706" stroke="#D6A84F" stroke-width="5" stroke-linecap="round"/>
+    <path d="M716 636L700 624V648L716 636Z" fill="#D6A84F"/>
+
+    <rect x="724" y="600" width="220" height="72" rx="16" fill="#111F33" stroke="#D6A84F" stroke-opacity="0.38"/>
+    <text x="834" y="638" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="25" font-weight="700" text-anchor="middle" dominant-baseline="middle">Site Visits</text>
+
+    <circle cx="960" cy="636" r="8" fill="#D6A84F"/>
+    <path d="M974 636H990" stroke="#D6A84F" stroke-width="5" stroke-linecap="round"/>
+    <path d="M1000 636L984 624V648L1000 636Z" fill="#D6A84F"/>
+
+    <rect x="1008" y="600" width="220" height="72" rx="16" fill="#D6A84F"/>
+    <text x="1118" y="638" fill="#05070D" font-family="Arial, sans-serif" font-size="25" font-weight="700" text-anchor="middle" dominant-baseline="middle">Book</text>
+  </g>
+
+  <rect x="86" y="760" width="1194" height="56" rx="14" fill="#111F33" stroke="#21314A"/>
+  <text x="126" y="796" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="22">Audit focus: source clarity, buyer intent, follow-up delay, site visit visibility, and booking readiness.</text>
+</svg>

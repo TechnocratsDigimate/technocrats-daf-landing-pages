@@ -1,0 +1,32 @@
+# dependencies
+/node_modules
+
+# next.js build output
+/.next/
+/out/
+/dist/
+
+# local environment — never commit these
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dev-server.out.log
+dev-server.err.log
+*.log
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# misc
+*.pem
+.vercel
