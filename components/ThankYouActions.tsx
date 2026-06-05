@@ -1,6 +1,6 @@
 "use client";
 
-import { trackBookingClicked, trackWhatsAppClicked } from "@/lib/tracking";
+import { trackBookingClicked, trackEvent, trackWhatsAppClicked } from "@/lib/tracking";
 import { WhatsAppLink } from "@/components/WhatsAppLink";
 
 const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
@@ -52,7 +52,10 @@ export function ThankYouActions({ niche, name }: { niche: string; name?: string 
           <a
             className="mt-4 inline-block rounded-md bg-gold px-5 py-3 font-semibold text-ink transition hover:bg-gold-soft"
             href={fallbackHref}
-            onClick={() => trackWhatsAppClicked("booking_fallback", niche)}
+            onClick={() => {
+              trackWhatsAppClicked("booking_fallback", niche);
+              trackEvent("whatsapp_click", { location: "booking_fallback" });
+            }}
             rel="noreferrer"
             target={whatsappNumber ? "_blank" : undefined}
           >
@@ -70,7 +73,10 @@ export function ThankYouActions({ niche, name }: { niche: string; name?: string 
         <a
           className="mt-6 block rounded-md bg-gold px-5 py-3 text-center font-semibold text-ink transition hover:bg-gold-soft"
           href={confirmationHref}
-          onClick={() => trackWhatsAppClicked("post_submit_confirmation", niche)}
+          onClick={() => {
+            trackWhatsAppClicked("post_submit_confirmation", niche);
+            trackEvent("whatsapp_click", { location: "post_submit_confirmation" });
+          }}
           rel="noreferrer"
           target={whatsappNumber ? "_blank" : undefined}
         >

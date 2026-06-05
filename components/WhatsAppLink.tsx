@@ -1,6 +1,6 @@
 "use client";
 
-import { trackWhatsAppClicked } from "@/lib/tracking";
+import { trackEvent, trackWhatsAppClicked } from "@/lib/tracking";
 
 type WhatsAppLinkProps = {
   label?: string;
@@ -19,7 +19,10 @@ export function WhatsAppLink({ label = "Chat on WhatsApp", source, className, fu
     <a
       className={className}
       href={href}
-      onClick={() => trackWhatsAppClicked(source, funnelType)}
+      onClick={() => {
+        trackWhatsAppClicked(source, funnelType);
+        trackEvent("whatsapp_click", { location: source });
+      }}
       rel="noreferrer"
       target={whatsappNumber ? "_blank" : undefined}
     >

@@ -7,6 +7,7 @@ import {
   captureUtmParameters,
   getStoredUtmParameters,
   trackDuplicateLeadDetected,
+  trackEvent,
   trackFormAbandoned,
   trackFormStarted,
   trackLeadSubmitted,
@@ -146,7 +147,10 @@ function DuplicatePanel({ niche }: { niche: string }) {
         <a
           className="mt-7 inline-block rounded-md bg-[linear-gradient(90deg,#d6a84f,#f3d58a)] px-6 py-4 font-semibold text-ink shadow-gold transition hover:brightness-110"
           href={waHref}
-          onClick={() => trackWhatsAppClicked("duplicate_lead_continue", niche)}
+          onClick={() => {
+          trackWhatsAppClicked("duplicate_lead_continue", niche);
+          trackEvent("whatsapp_click", { location: "duplicate_lead_continue" });
+        }}
           rel="noreferrer"
           target={hasNumber ? "_blank" : undefined}
         >
@@ -209,6 +213,10 @@ export function MultiStepAuditForm({ funnel }: { funnel: FunnelConfig }) {
     if (!hasStartedRef.current) {
       hasStartedRef.current = true;
       trackFormStarted(funnel.niche);
+      trackEvent("audit_form_start", {
+        page: funnel.slug === "real-estate-growth-audit" ? "real-estate-audit" : "study-abroad-audit",
+        niche: funnel.niche
+      });
     }
 
     resetInactivityTimer();
@@ -338,6 +346,20 @@ export function MultiStepAuditForm({ funnel }: { funnel: FunnelConfig }) {
 
       hasSubmittedRef.current = true;
       trackLeadSubmitted(funnel.niche);
+      trackEvent("audit_form_complete", {
+        page: funnel.slug === "real-estate-growth-audit" ? "real-estate-audit" : "study-abroad-audit",
+        niche: funnel.niche,
+        budget: typeof normalizedAnswers.monthlyBudget === "string" ? normalizedAnswers.monthlyBudget : "",
+        lead_source: typeof normalizedAnswers.leadSource === "string" ? normalizedAnswers.leadSource : "",
+        intent: typeof normalizedAnswers.readyToInvest === "string" ? normalizedAnswers.readyToInvest : "",
+        ...(funnel.niche === "Study Abroad" && {
+          country: Array.isArray(normalizedAnswers.countries)
+            ? normalizedAnswers.countries.join(", ")
+            : typeof normalizedAnswers.countries === "string"
+            ? normalizedAnswers.countries
+            : ""
+        })
+      });
       const submittedName = typeof answers.name === "string" ? answers.name.trim() : "";
       const redirectUrl = `/thank-you?niche=${encodeURIComponent(funnel.niche)}${submittedName ? `&name=${encodeURIComponent(submittedName)}` : ""}`;
       router.push(redirectUrl);

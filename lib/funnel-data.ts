@@ -301,22 +301,6 @@ export const studyAbroadFunnel: FunnelConfig = {
       ]
     },
     {
-      id: "biggestProblem",
-      label: "What is your biggest marketing problem right now?",
-      type: "single",
-      options: [
-        "Not getting enough student leads",
-        "Leads are coming but not serious",
-        "Students don't answer calls",
-        "Students only ask for free information",
-        "CPL is too high",
-        "Low walk-ins / low appointments",
-        "No proper follow-up system",
-        "No country-specific funnel",
-        "Not sure what is wrong"
-      ]
-    },
-    {
       id: "monthlyBudget",
       label: "What is your current monthly ad budget?",
       type: "single",
@@ -335,6 +319,22 @@ export const studyAbroadFunnel: FunnelConfig = {
         "CRM / Lead Tracking",
         "Reels / Social Media Content",
         "Complete Student Lead Generation Funnel"
+      ]
+    },
+    {
+      id: "biggestProblem",
+      label: "What is your biggest marketing problem right now?",
+      type: "single",
+      options: [
+        "Not getting enough student leads",
+        "Leads are coming but not serious",
+        "Students don't answer calls",
+        "Students only ask for free information",
+        "CPL is too high",
+        "Low walk-ins / low appointments",
+        "No proper follow-up system",
+        "No country-specific funnel",
+        "Not sure what is wrong"
       ]
     },
     {

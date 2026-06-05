@@ -335,3 +335,32 @@ export function trackWhatsAppClicked(ctaLocation?: string, funnelInput?: string 
 export function trackDuplicateLeadDetected(funnelInput?: string | FunnelType) {
   return pushEvent("DuplicateLeadDetected", funnelInput);
 }
+
+// ─── GTM conversion events ────────────────────────────────────────────────────
+// Pushes named conversion events directly to window.dataLayer.
+// GTM container is already loaded by TrackingScripts.tsx — no second loader needed.
+// All events are consent-gated via hasTrackingConsent().
+
+type ConversionEventName =
+  | "audit_form_start"
+  | "audit_form_complete"
+  | "book_call"
+  | "whatsapp_click";
+
+type ConversionEventProperties = {
+  page?: string;
+  niche?: string;
+  budget?: string;
+  lead_source?: string;
+  intent?: string;
+  country?: string;
+  location?: string;
+  [key: string]: unknown;
+};
+
+export function trackEvent(event: ConversionEventName, properties: ConversionEventProperties = {}) {
+  if (!canUseBrowser() || !hasTrackingConsent()) return;
+  const w = window as WindowWithTracking;
+  w.dataLayer = w.dataLayer || [];
+  w.dataLayer.push({ event, ...properties });
+}
