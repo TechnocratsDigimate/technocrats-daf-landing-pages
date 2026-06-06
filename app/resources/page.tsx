@@ -168,10 +168,10 @@ export default function ResourcesPage() {
 
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <Link
-                href="/performance-marketing-survival-kit"
+                href="#resources-library"
                 className="w-full rounded-md bg-gold px-6 py-3.5 text-center font-semibold text-ink transition-all duration-200 hover:bg-gold-soft hover:shadow-[0_0_20px_rgba(214,168,79,0.35)] sm:w-auto"
               >
-                Download Free PMSK Guide →
+                Explore Free Resources →
               </Link>
               <Link
                 href="/free-growth-audit"
@@ -288,7 +288,7 @@ export default function ResourcesPage() {
                       href="/performance-marketing-survival-kit"
                       className="rounded-md bg-blue-600 px-6 py-3 text-center font-semibold text-white transition-all duration-200 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]"
                     >
-                      Download Free Guide →
+                      Download Interview Guide →
                     </Link>
                     <a
                       href="/assets/pmsk/pmsk-paid-ads-interview-questions.pdf"
@@ -317,7 +317,7 @@ export default function ResourcesPage() {
       </section>
 
       {/* ── Coming Soon Grid ──────────────────────────────────────────────── */}
-      <section className="bg-navy py-16 md:py-24">
+      <section id="resources-library" className="bg-navy py-16 md:py-24">
         <div className="mx-auto max-w-[1320px] px-5 md:px-8 lg:px-10">
           <div className="mb-12 text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
