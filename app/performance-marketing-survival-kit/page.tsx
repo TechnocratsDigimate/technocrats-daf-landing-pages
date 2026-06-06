@@ -323,6 +323,48 @@ export default function PmskPage() {
         </div>
       </section>
 
+      {/* ── Coming Soon: Giveaway #3 — Campaign Troubleshooting Playbook ─── */}
+      <section className="bg-[#07111f] py-12 md:py-16">
+        <div className="mx-auto max-w-[1320px] px-5 md:px-8 lg:px-10">
+          <div className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-7 md:p-10">
+            <div className="grid items-center gap-6 md:grid-cols-[1fr_auto]">
+
+              {/* Copy */}
+              <div>
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-0.5 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    Coming Soon
+                  </span>
+                  <span className="font-mono text-xs font-bold tracking-wider text-slate-600">
+                    FIX
+                  </span>
+                </div>
+                <h2 className="text-xl font-semibold text-white md:text-2xl">
+                  Campaign Troubleshooting Playbook
+                </h2>
+                <p className="mt-2 leading-7 text-slate-500">
+                  A step-by-step playbook for freelancers, agency interns, and in-house marketers. Diagnose and fix underperforming campaigns fast — without guessing. Join the waitlist and we&apos;ll send it the moment it&apos;s ready.
+                </p>
+              </div>
+
+              {/* CTA */}
+              <div className="flex-shrink-0">
+                <TrackedAnchor
+                  href={waHref}
+                  target={whatsappNumber ? "_blank" : undefined}
+                  rel={whatsappNumber ? "noreferrer" : undefined}
+                  className="inline-block rounded-md border border-white/15 px-5 py-3 text-sm font-semibold text-slate-400 transition-all duration-200 hover:border-blue-500/40 hover:text-blue-400"
+                  trackLocation="pmsk-page-giveaway3-waitlist"
+                >
+                  Join Waitlist on WhatsApp →
+                </TrackedAnchor>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── FAQ ──────────────────────────────────────────────────────────── */}
       <section className="bg-[#060c14] py-16 md:py-24">
         <div className="mx-auto max-w-[1320px] px-5 md:px-8 lg:px-10">

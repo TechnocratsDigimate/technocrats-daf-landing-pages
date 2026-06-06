@@ -9,6 +9,7 @@ import { ServicesSection } from "@/components/home/ServicesSection";
 import { IndustriesSection } from "@/components/home/IndustriesSection";
 import { ProofSection } from "@/components/home/ProofSection";
 import { PmskTeaser } from "@/components/home/PmskTeaser";
+import { ResourcesStrip } from "@/components/home/ResourcesStrip";
 import { AuditCtaSection } from "@/components/home/AuditCtaSection";
 import { FounderSection } from "@/components/home/FounderSection";
 import { FaqAccordion } from "@/components/home/FaqAccordion";
@@ -32,6 +33,7 @@ export default function HomePage() {
       <IndustriesSection />
       <ProofSection />
       <PmskTeaser />
+      <ResourcesStrip />
       <AuditCtaSection />
       <FounderSection />
       <FaqAccordion />

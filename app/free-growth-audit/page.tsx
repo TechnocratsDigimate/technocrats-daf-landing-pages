@@ -360,6 +360,28 @@ export default function FreeGrowthAuditPage() {
               </li>
             ))}
           </ul>
+
+          {/* Bonus: 21-Point Lead Leakage Audit Checklist */}
+          <div className="mt-6 rounded-2xl border border-gold/20 bg-gold/[0.04] p-5">
+            <div className="flex items-start gap-4">
+              <div className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-gold/30 bg-gold/10">
+                <svg className="h-4 w-4 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">
+                  Bonus — Included Free
+                </p>
+                <p className="mt-1 font-semibold text-white">
+                  21-Point Lead Leakage Audit Checklist
+                </p>
+                <p className="mt-1.5 text-sm leading-6 text-slate-400">
+                  Every audit applicant also receives our 21-point diagnostic checklist — a framework you can use independently on any campaign to find exactly where leads are dropping before they convert.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </SectionWrapper>
 
