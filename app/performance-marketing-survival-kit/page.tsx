@@ -95,59 +95,14 @@ export default function PmskPage() {
         <div className="relative mx-auto max-w-[1320px] px-5 md:px-8 lg:px-10">
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
 
-            {/* Left: Ebook cover mockup */}
+            {/* Left: Ebook cover */}
             <div className="mx-auto w-full max-w-xs lg:max-w-sm">
-              {/*
-                TODO: Replace this mockup with the actual ebook cover image:
-                <img
-                  src="/assets/pmsk/cover.png"
-                  alt="Performance Marketing Survival Kit — Free Guide"
-                  className="w-full rounded-2xl shadow-[0_32px_80px_rgba(59,130,246,0.2)]"
-                />
-              */}
-              <div
-                className="rotate-2 hover:rotate-0 transition-transform duration-500 rounded-2xl border border-blue-500/25 bg-gradient-to-br from-[#0a1628] to-[#060c14] p-8 shadow-[0_32px_80px_rgba(59,130,246,0.18)]"
-                style={{ aspectRatio: "3/4" }}
-              >
-                {/* Decorative top bar */}
-                <div className="mb-6 flex items-center gap-2">
-                  <div className="h-1.5 w-8 rounded-full bg-blue-500" />
-                  <div className="h-1.5 w-4 rounded-full bg-blue-500/40" />
-                  <div className="h-1.5 w-2 rounded-full bg-blue-500/20" />
-                </div>
-
-                <div className="mb-3 inline-flex items-center rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-blue-400">
-                  Free Guide
-                </div>
-
-                <h3 className="mt-4 text-xl font-bold leading-tight text-white">
-                  Performance Marketing
-                </h3>
-                <h3 className="text-xl font-bold leading-tight text-blue-400">
-                  Survival Kit
-                </h3>
-
-                <div className="my-5 h-px w-full bg-white/10" />
-
-                <p className="text-sm leading-6 text-slate-400">
-                  15 Paid Ads Interview Questions That Expose Fake Experts
-                </p>
-
-                {/* Decorative chart bars */}
-                <div className="mt-auto flex items-end gap-1.5 pt-8">
-                  {[40, 55, 35, 70, 50, 85, 60, 45, 75, 55].map((h, i) => (
-                    <div
-                      key={i}
-                      className="flex-1 rounded-sm bg-blue-500/30"
-                      style={{ height: `${h}%`, minHeight: "8px", maxHeight: "48px" }}
-                    />
-                  ))}
-                </div>
-
-                <p className="mt-4 text-xs text-slate-600">
-                  By Gautam Punj · Technocrats Digimate
-                </p>
-              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/assets/pmsk/cover.png"
+                alt="Performance Marketing Survival Kit — 15 Paid Ads Interview Questions That Expose Fake Experts"
+                className="w-full rotate-2 rounded-2xl shadow-[0_32px_80px_rgba(59,130,246,0.25)] transition-transform duration-500 hover:rotate-0"
+              />
             </div>
 
             {/* Right: Headline + form */}
