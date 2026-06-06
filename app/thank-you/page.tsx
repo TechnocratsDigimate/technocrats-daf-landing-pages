@@ -92,11 +92,11 @@ function AuditVersion({
 
         {/* Headline */}
         <h1 className="mt-4 max-w-3xl text-4xl font-semibold leading-tight md:text-5xl">
-          Your free {displayNiche}growth audit request is confirmed{displayName}.
+          Your audit request is in{displayName}.
         </h1>
 
         <p className="mt-5 max-w-2xl leading-8 text-slate-300">
-          Gautam reviews every application personally. Here&apos;s what happens next.
+          We&apos;ll review your lead system the same way we review high-ticket client accounts — ads, landing page, tracking, WhatsApp follow-up, and CRM. While we prepare, your checklist is ready below.
         </p>
 
         {/* Next steps */}
@@ -104,13 +104,13 @@ function AuditVersion({
           {[
             {
               step: "1",
-              title: "Application reviewed",
-              desc: "Gautam reviews your submission within 24 business hours.",
+              title: "We map your leaks",
+              desc: "We'll review the details you submitted and map where your leads are leaking across the six stages.",
             },
             {
               step: "2",
-              title: "Slot confirmed",
-              desc: "You'll receive a WhatsApp message with your debrief call time.",
+              title: "We schedule your call",
+              desc: "You'll hear from us within one business day to schedule your free growth audit.",
             },
             {
               step: "3",
@@ -134,13 +134,13 @@ function AuditVersion({
         {/* Checklist download */}
         <div className="mt-10 rounded-2xl border border-gold/20 bg-gold/[0.04] p-6">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold">
-            Included Free — Your Bonus
+            Start Here — Free Checklist
           </p>
           <h2 className="mt-2 text-xl font-semibold text-white">
-            Your 21-Point Lead Leakage Checklist is ready.
+            Start with the 21-Point Lead Leakage Audit
           </h2>
           <p className="mt-2 text-sm leading-6 text-slate-400">
-            Use this checklist to self-audit your ads, landing page, tracking, WhatsApp follow-up, CRM visibility, and sales handoff before your audit call.
+            This is the exact framework we&apos;ll use on your account. Run through it before we talk — the points you can&apos;t tick are usually where the leaks are, and it makes our review far more useful.
           </p>
           <a
             href="/assets/audit/21-point-lead-leakage-audit.pdf"
@@ -152,7 +152,7 @@ function AuditVersion({
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
             </svg>
-            Download Checklist
+            Download the checklist (PDF)
           </a>
         </div>
 
@@ -198,11 +198,11 @@ function EbookVersion({ name }: { name: string }) {
 
         {/* Headline */}
         <h1 className="mt-4 text-center text-4xl font-semibold leading-tight text-white md:text-5xl">
-          Your Performance Marketing Survival Kit is ready{displayName}.
+          Your guide is ready{displayName}.
         </h1>
 
         <p className="mt-4 text-center leading-8 text-slate-400">
-          Thanks for requesting the guide. You can download it below. We&apos;ll also follow up on WhatsApp with future playbooks and workshop updates.
+          15 Paid Ads Interview Questions That Expose Fake Experts — yours to keep. Ads Manager is easy; the job isn&apos;t. This guide is about the thinking that gets you hired.
         </p>
 
         {/* Primary download card */}
@@ -235,13 +235,16 @@ function EbookVersion({ name }: { name: string }) {
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
             </svg>
-            Download Free Guide
+            Download the guide (PDF)
           </a>
+          <p className="mt-3 text-center text-xs leading-5 text-slate-600">
+            Opens or downloads depending on your browser. Save it to your phone so you can review before your next interview.
+          </p>
 
           {/* WhatsApp follow-up note */}
           <div className="mt-5 border-t border-white/10 pt-4">
             <p className="mb-3 text-sm text-slate-500">
-              Want future playbooks and workshop updates sent directly?
+              Have a question while you prep?
             </p>
             <TrackedAnchor
               href={waHref}
@@ -253,9 +256,25 @@ function EbookVersion({ name }: { name: string }) {
               <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-400/20">
                 <span className="h-2 w-2 rounded-full bg-emerald-400" />
               </span>
-              Follow us on WhatsApp
+              Have a question while you prep? Message us on WhatsApp →
             </TrackedAnchor>
+            <p className="mt-2 text-center text-xs text-slate-600">We answer real paid media questions, not auto-replies.</p>
           </div>
+        </div>
+
+        {/* How to use */}
+        <div className="mt-4 space-y-2.5 rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
+          {[
+            "Read it with the answer covered — attempt your own version of each question first, then compare to the framework.",
+            "Score yourself on the final checklist to see exactly where you're interview-ready and where to drill.",
+          ].map((tip, i) => (
+            <p key={i} className="flex items-start gap-3 text-sm leading-6 text-slate-400">
+              <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-blue-500/15 text-xs font-bold text-blue-400">
+                {i + 1}
+              </span>
+              {tip}
+            </p>
+          ))}
         </div>
 
         {/* Cross-sell: Free Audit */}
@@ -264,16 +283,16 @@ function EbookVersion({ name }: { name: string }) {
             Also Available — Free
           </p>
           <h2 className="mt-2 text-lg font-semibold text-white">
-            Running paid ads? Get a proper audit.
+            Already running ads for a business?
           </h2>
           <p className="mt-2 text-sm leading-6 text-slate-400">
-            If you&apos;re already spending on Meta Ads or Google Ads, the free growth audit goes deeper — a personal review of your campaigns, tracking, landing page, and follow-up. Written findings included.
+            The thinking in this guide is what we apply to live accounts. If you want a second set of eyes on yours, book a free growth audit — no pitch, just a real review.
           </p>
           <Link
             href="/free-growth-audit"
             className="mt-4 inline-block rounded-md border border-gold/40 px-5 py-2.5 text-sm font-semibold text-gold transition-all duration-200 hover:border-gold hover:bg-gold/10"
           >
-            Book Free Growth Audit →
+            See the free audit →
           </Link>
         </div>
 
