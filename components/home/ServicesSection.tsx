@@ -4,6 +4,20 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 
 const services = [
   {
+    title: "Performance Marketing & Lead Generation",
+    desc: "A connected system for paid ads, landing pages, tracking, WhatsApp follow-up, CRM, and reporting.",
+    icon: null,
+    iconAlt: "Performance Marketing",
+    href: "/services/performance-marketing-lead-generation"
+  },
+  {
+    title: "Social Media Marketing",
+    desc: "Content strategy for Instagram, LinkedIn, Facebook, and YouTube that supports trust and lead quality.",
+    icon: null,
+    iconAlt: "Social Media Marketing",
+    href: "/services/social-media-marketing"
+  },
+  {
     title: "Meta Ads Management",
     desc: "Campaign strategy, CAPI setup, and optimisation for Facebook and Instagram.",
     icon: "/assets/brand/meta-ads.svg.svg",
@@ -55,6 +69,39 @@ function ServiceIcon({ icon, iconAlt }: { icon: string | null; iconAlt: string }
   );
 }
 
+function ServiceCard({ service }: { service: (typeof services)[number] }) {
+  const content = (
+    <>
+      <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-gold/20 bg-gold/10">
+        <ServiceIcon icon={service.icon} iconAlt={service.iconAlt} />
+      </div>
+
+      <h3 className="mt-5 font-semibold text-white">{service.title}</h3>
+      <p className="mt-2 text-sm leading-6 text-slate-400">{service.desc}</p>
+      {"href" in service && service.href && (
+        <p className="mt-4 text-sm font-semibold text-gold transition group-hover:text-gold-soft">
+          Learn more
+        </p>
+      )}
+
+      <div className="mt-5 h-px w-0 bg-gradient-to-r from-gold to-transparent transition-all duration-500 group-hover:w-full" />
+    </>
+  );
+
+  const className =
+    "group rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-gold/25 hover:shadow-gold";
+
+  if ("href" in service && service.href) {
+    return (
+      <Link href={service.href} className={className}>
+        {content}
+      </Link>
+    );
+  }
+
+  return <div className={className}>{content}</div>;
+}
+
 export function ServicesSection() {
   return (
     <SectionWrapper bg="ink" id="services">
@@ -66,21 +113,7 @@ export function ServicesSection() {
 
       <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {services.map((service) => (
-          <div
-            key={service.title}
-            className="group rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-gold/25 hover:shadow-gold"
-          >
-            {/* Icon container */}
-            <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-gold/20 bg-gold/10">
-              <ServiceIcon icon={service.icon} iconAlt={service.iconAlt} />
-            </div>
-
-            <h3 className="mt-5 font-semibold text-white">{service.title}</h3>
-            <p className="mt-2 text-sm leading-6 text-slate-400">{service.desc}</p>
-
-            {/* Sliding gold underline on hover */}
-            <div className="mt-5 h-px w-0 bg-gradient-to-r from-gold to-transparent transition-all duration-500 group-hover:w-full" />
-          </div>
+          <ServiceCard key={service.title} service={service} />
         ))}
       </div>
 

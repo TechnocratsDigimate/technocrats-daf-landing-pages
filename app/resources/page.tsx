@@ -543,6 +543,19 @@ export default function ResourcesPage() {
               </span>
             ))}
           </div>
+
+          <div className="mx-auto mt-8 flex max-w-3xl flex-wrap items-center justify-center gap-3 rounded-md border border-white/10 bg-white/[0.03] px-4 py-3 text-sm">
+            <span className="font-semibold text-slate-300">Useful service links:</span>
+            <Link className="font-medium text-gold hover:text-gold-soft" href="/services/performance-marketing-lead-generation">
+              Performance Marketing & Lead Generation
+            </Link>
+            <Link className="font-medium text-gold hover:text-gold-soft" href="/services/social-media-marketing">
+              Social Media Marketing
+            </Link>
+            <Link className="font-medium text-gold hover:text-gold-soft" href="/free-growth-audit">
+              Free Growth Audit
+            </Link>
+          </div>
         </div>
       </section>
 

@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { BrandHeader } from "@/components/BrandHeader";
 import { Footer } from "@/components/Footer";
 import { MultiStepAuditForm } from "@/components/MultiStepAuditForm";
@@ -264,6 +265,9 @@ function ClientProofVisual({ niche }: { niche: string }) {
 
 export function FunnelPage({ funnel }: { funnel: FunnelConfig }) {
   const isStudyAbroad = funnel.niche === "Study Abroad";
+  const serviceAnchorText = isStudyAbroad
+    ? "study abroad lead generation system"
+    : "real estate lead generation system";
   const auditFormIntro = isStudyAbroad
     ? "Answer a few questions so we can understand your country focus, student lead quality issue, ad spend, and counselling follow-up bottleneck before the audit call."
     : "Answer a few questions so we can understand your niche, ad spend, lead quality issue, and follow-up bottleneck before the audit call.";
@@ -340,6 +344,16 @@ export function FunnelPage({ funnel }: { funnel: FunnelConfig }) {
                 {funnel.heroHeadline}
               </h1>
               <p className="mt-5 max-w-[730px] text-base leading-[1.65] text-slate-200/90 md:text-[1.18rem] md:leading-[1.65]">{funnel.heroSubheadline}</p>
+              <p className="mt-4 max-w-[730px] text-sm leading-6 text-slate-300">
+                Learn how this fits into a complete{" "}
+                <Link
+                  className="font-medium text-gold underline underline-offset-2 hover:text-gold-soft"
+                  href="/services/performance-marketing-lead-generation"
+                >
+                  {serviceAnchorText}
+                </Link>
+                .
+              </p>
               <div className="mt-5 grid max-w-2xl gap-3 sm:grid-cols-3">
                 {["Funnel diagnosis", "Lead quality check", "Follow-up audit"].map((item) => (
                   <div className="rounded-md border border-white/10 bg-white/[0.035] px-4 py-3 text-sm font-medium text-slate-200 md:text-[0.95rem]" key={item}>

@@ -24,6 +24,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9
     },
     {
+      url: `${siteUrl}/services/performance-marketing-lead-generation`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.8
+    },
+    {
+      url: `${siteUrl}/services/social-media-marketing`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.8
+    },
+    {
       url: `${siteUrl}/real-estate-growth-audit`,
       lastModified,
       changeFrequency: "monthly",

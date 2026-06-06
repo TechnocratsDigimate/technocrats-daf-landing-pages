@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { BrandHeader } from "@/components/BrandHeader";
 import { Footer } from "@/components/Footer";
 import { SectionWrapper } from "@/components/ui/SectionWrapper";
@@ -389,6 +390,14 @@ export default function FreeGrowthAuditPage() {
                 </p>
                 <p className="mt-1.5 text-sm leading-6 text-slate-400">
                   Every audit applicant also receives our 21-point diagnostic checklist — a framework you can use independently on any campaign to find exactly where leads are dropping before they convert.
+                  It is the same diagnostic thinking behind our{" "}
+                  <Link
+                    className="font-medium text-gold underline underline-offset-2 hover:text-gold-soft"
+                    href="/services/performance-marketing-lead-generation"
+                  >
+                    performance marketing and lead generation system
+                  </Link>
+                  .
                 </p>
               </div>
             </div>
