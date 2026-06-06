@@ -143,7 +143,7 @@ export default function PmskPage() {
               {/* Form card */}
               <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm">
                 <p className="mb-5 text-sm font-medium text-slate-300">
-                  Enter your details — we&apos;ll send the guide directly to your WhatsApp:
+                  Submit the form to access the free guide instantly. We&apos;ll also send future playbooks and workshop updates on WhatsApp.
                 </p>
                 <PmskForm />
               </div>
@@ -256,7 +256,7 @@ export default function PmskPage() {
               Download Free — Takes 30 Seconds
             </h2>
             <p className="mt-3 leading-7 text-slate-400">
-              Enter your details below. The guide lands on your WhatsApp immediately.
+              Submit the form and download the guide instantly. We&apos;ll also keep you updated on WhatsApp with future playbooks and workshops.
             </p>
 
             <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-left backdrop-blur-sm md:p-8">

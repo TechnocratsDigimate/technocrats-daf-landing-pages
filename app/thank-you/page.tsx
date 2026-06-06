@@ -145,10 +145,12 @@ function AuditVersion({
   );
 }
 
+const PMSK_PDF_URL = "/assets/pmsk/pmsk-paid-ads-interview-questions.pdf";
+
 function EbookVersion({ name }: { name: string }) {
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
   const waHref = whatsappNumber
-    ? `https://wa.me/${whatsappNumber.replace(/\D/g, "")}?text=${encodeURIComponent("Hi, I just signed up for the PMSK guide. Please send it over.")}`
+    ? `https://wa.me/${whatsappNumber.replace(/\D/g, "")}?text=${encodeURIComponent("Hi, I just downloaded the PMSK guide. Looking forward to future playbooks and updates.")}`
     : "/performance-marketing-survival-kit";
 
   const displayName = name ? `, ${name}` : "";
@@ -166,54 +168,66 @@ function EbookVersion({ name }: { name: string }) {
 
         {/* Eyebrow */}
         <p className="mt-6 text-center text-sm font-semibold uppercase tracking-[0.22em] text-blue-400">
-          Guide on Its Way
+          Guide Ready
         </p>
 
         {/* Headline */}
         <h1 className="mt-4 text-center text-4xl font-semibold leading-tight text-white md:text-5xl">
-          Your guide is coming{displayName}.
+          Your Performance Marketing Survival Kit is ready{displayName}.
         </h1>
 
         <p className="mt-4 text-center leading-8 text-slate-400">
-          We&apos;re sending the{" "}
-          <span className="font-medium text-white">
-            Performance Marketing Survival Kit
-          </span>{" "}
-          to your WhatsApp right now.
+          Thanks for requesting the guide. You can download it below. We&apos;ll also follow up on WhatsApp with future playbooks and workshop updates.
         </p>
 
-        {/* Delivery card */}
+        {/* Primary download card */}
         <div className="mt-8 rounded-2xl border border-blue-500/20 bg-blue-500/[0.04] p-6">
-          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-blue-400">
-            What&apos;s happening
-          </p>
-          <ol className="space-y-3">
-            {[
-              "Your WhatsApp number has been logged.",
-              "The guide link is being sent via WhatsApp now.",
-              "Check your WhatsApp — it should arrive within a few minutes.",
-            ].map((step, i) => (
-              <li key={i} className="flex items-start gap-3 text-sm text-slate-300">
-                <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-blue-500/20 text-xs font-bold text-blue-400">
-                  {i + 1}
-                </span>
-                {step}
-              </li>
-            ))}
-          </ol>
+          {/* Guide identity */}
+          <div className="mb-5 flex items-start gap-4">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-blue-500/25 bg-blue-500/10">
+              <svg className="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+              </svg>
+            </div>
+            <div>
+              <p className="font-semibold text-white">
+                15 Paid Ads Interview Questions That Expose Fake Experts
+              </p>
+              <p className="mt-0.5 text-sm text-slate-500">
+                Performance Marketing Survival Kit · Technocrats Digimate · PDF, 454 KB
+              </p>
+            </div>
+          </div>
 
-          <div className="mt-6 border-t border-white/10 pt-5">
+          {/* Download button */}
+          <a
+            href={PMSK_PDF_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-5 py-3.5 text-center font-semibold text-white transition-all duration-200 hover:bg-blue-500 hover:shadow-[0_0_24px_rgba(59,130,246,0.35)]"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            Download Free Guide
+          </a>
+
+          {/* WhatsApp follow-up note */}
+          <div className="mt-5 border-t border-white/10 pt-4">
             <p className="mb-3 text-sm text-slate-500">
-              Didn&apos;t receive it? Message us and we&apos;ll resend manually.
+              Want future playbooks and workshop updates sent directly?
             </p>
             <TrackedAnchor
               href={waHref}
               target={whatsappNumber ? "_blank" : undefined}
               rel={whatsappNumber ? "noreferrer" : undefined}
-              className="block rounded-md bg-blue-600 px-5 py-3 text-center font-semibold text-white transition-all duration-200 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+              className="flex w-full items-center justify-center gap-2 rounded-md border border-blue-500/30 px-5 py-2.5 text-sm font-semibold text-blue-400 transition-all duration-200 hover:border-blue-500 hover:bg-blue-500/10"
               trackLocation="thank-you-ebook-whatsapp"
             >
-              Message on WhatsApp →
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-400/20">
+                <span className="h-2 w-2 rounded-full bg-emerald-400" />
+              </span>
+              Follow us on WhatsApp
             </TrackedAnchor>
           </div>
         </div>
