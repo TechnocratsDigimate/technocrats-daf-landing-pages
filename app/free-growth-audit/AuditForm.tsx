@@ -254,11 +254,11 @@ export function AuditForm() {
         }),
       });
 
-      const data = (await res.json()) as { ok: boolean };
+      const data = (await res.json()) as { ok: boolean; message?: string };
 
       if (!data.ok) {
         setSubmitError(
-          "Something went wrong. Please try again or message us on WhatsApp."
+          data.message ?? "Something went wrong. Please try again or message us on WhatsApp."
         );
         setSubmitting(false);
         return;

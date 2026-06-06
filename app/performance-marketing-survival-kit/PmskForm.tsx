@@ -134,10 +134,10 @@ export function PmskForm() {
         }),
       });
 
-      const data = (await res.json()) as { ok: boolean };
+      const data = (await res.json()) as { ok: boolean; message?: string };
 
       if (!data.ok) {
-        setSubmitError("Something went wrong. Please try again.");
+        setSubmitError(data.message ?? "Something went wrong. Please try again.");
         setSubmitting(false);
         return;
       }

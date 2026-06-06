@@ -1,5 +1,15 @@
 import { NextResponse } from "next/server";
 
+// ─── GET: health / method-check ───────────────────────────────────────────────
+// Browsers and uptime monitors hit this URL via GET.
+// Return 405 so Hostinger's reverse proxy gets a valid HTTP response (not 503).
+export async function GET() {
+  return NextResponse.json(
+    { ok: false, message: "Use POST to submit leads." },
+    { status: 405 }
+  );
+}
+
 type LeadRequest = {
   niche?: string;
   page?: string;
@@ -89,50 +99,64 @@ export async function POST(request: Request) {
 
   try {
     body = (await request.json()) as LeadRequest;
-  } catch {
+  } catch (parseError) {
+    console.error("[/api/leads] Failed to parse request JSON.", parseError);
     return NextResponse.json({ ok: false, message: "Invalid request payload." }, { status: 400 });
   }
 
   if (!isValidLeadRequest(body)) {
+    console.error("[/api/leads] Invalid lead payload — missing required fields.", {
+      hasNiche: Boolean(body.niche),
+      hasPage: Boolean(body.page),
+      hasAnswers: Boolean(body.answers),
+    });
     return NextResponse.json({ ok: false, message: "Missing required lead fields." }, { status: 400 });
   }
 
   const payload = buildLeadPayload(body);
 
   if (!process.env.LEAD_WEBHOOK_URL) {
-    // Setup warning: a normal Google Sheet edit URL cannot receive POST requests.
-    // Add a Google Apps Script webhook or CRM webhook to LEAD_WEBHOOK_URL before launch.
-    if (process.env.NODE_ENV !== "production") {
-      console.info("Lead webhook not configured. Development lead payload:", payload);
-    }
-
-    return NextResponse.json({
-      ok: true,
-      warning: process.env.LEAD_GOOGLE_SHEET_URL
-        ? "Google Sheet destination is recorded, but LEAD_WEBHOOK_URL is still needed to submit leads automatically."
-        : "Lead webhook is not configured yet. Add LEAD_WEBHOOK_URL before launch."
-    });
+    console.error(
+      "[/api/leads] LEAD_WEBHOOK_URL is not set. " +
+      "Add it to your environment variables (Hostinger → Node.js → Environment Variables)."
+    );
+    return NextResponse.json(
+      { ok: false, error: "LEAD_WEBHOOK_URL missing", message: "Lead webhook is not configured. Contact the site admin." },
+      { status: 500 }
+    );
   }
 
   try {
-    const webhookResponse = await fetch(process.env.LEAD_WEBHOOK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload),
-      cache: "no-store"
-    });
+    // 10-second timeout — prevents the serverless function from hanging
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10_000);
+
+    let webhookResponse: Response;
+    try {
+      webhookResponse = await fetch(process.env.LEAD_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        cache: "no-store",
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     if (!webhookResponse.ok) {
       const webhookError = await webhookResponse.text().catch(() => "");
-      console.error("Lead webhook rejected the submission.", {
+      console.error("[/api/leads] Webhook rejected the submission.", {
         status: webhookResponse.status,
         statusText: webhookResponse.statusText,
-        response: webhookError
+        response: webhookError,
+        niche: body.niche,
+        page: body.page,
       });
-
-      return NextResponse.json({ ok: false, message: "Lead webhook rejected the submission." }, { status: 502 });
+      return NextResponse.json(
+        { ok: false, message: `Lead webhook returned ${webhookResponse.status}. Please try again or contact us on WhatsApp.` },
+        { status: 502 }
+      );
     }
 
     let duplicate = false;
@@ -145,7 +169,18 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ok: true, duplicate });
   } catch (error) {
-    console.error("Lead webhook could not be reached.", error);
-    return NextResponse.json({ ok: false, message: "Lead webhook could not be reached." }, { status: 502 });
+    const isTimeout = error instanceof Error && error.name === "AbortError";
+    if (isTimeout) {
+      console.error("[/api/leads] Webhook timed out after 10s.", { niche: body.niche, page: body.page });
+      return NextResponse.json(
+        { ok: false, message: "The server took too long to respond. Please try again." },
+        { status: 504 }
+      );
+    }
+    console.error("[/api/leads] Unexpected error reaching webhook.", error);
+    return NextResponse.json(
+      { ok: false, message: "Could not reach the lead server. Please try again or contact us on WhatsApp." },
+      { status: 502 }
+    );
   }
 }
