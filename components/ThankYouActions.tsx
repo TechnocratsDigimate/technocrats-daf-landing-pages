@@ -29,7 +29,8 @@ export function ThankYouActions({ niche, name }: { niche: string; name?: string 
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-gold">Booking</p>
-            <h2 className="mt-3 text-2xl font-semibold text-white">Choose your audit slot</h2>
+            <h2 className="mt-3 text-2xl font-semibold text-white">Want to move faster? Book your audit call now →</h2>
+            <p className="mt-1.5 text-sm leading-6 text-slate-500">Pick a time that works — we&apos;ll have looked at your setup before the call.</p>
           </div>
         </div>
 
@@ -65,10 +66,10 @@ export function ThankYouActions({ niche, name }: { niche: string; name?: string 
       </div>
 
       <aside className="rounded-md border border-gold/25 bg-gold/10 p-5 md:p-6">
-        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-gold">Confirmation</p>
-        <h2 className="mt-3 text-2xl font-semibold text-white">Confirm your audit request on WhatsApp</h2>
+        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-gold">WhatsApp</p>
+        <h2 className="mt-3 text-2xl font-semibold text-white">Prefer to share details over WhatsApp? Message us here →</h2>
         <p className="mt-4 leading-7 text-slate-300">
-          Confirm your audit request on WhatsApp so our team can verify your number and slot.
+          Send your website or ad account and we&apos;ll take a look.
         </p>
         <a
           className="mt-6 block rounded-md bg-gold px-5 py-3 text-center font-semibold text-ink transition hover:bg-gold-soft"
