@@ -5,10 +5,9 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const NAV_LINKS = [
-  { label: "Services", href: "/services" },
-  { label: "Case Studies", href: "/case-studies" },
-  { label: "Resources", href: "/resources" },
-  { label: "Free Guide", href: "/performance-marketing-survival-kit" },
+  { label: "Services",     href: "/#services" },
+  { label: "Case Studies", href: "/#proof" },
+  { label: "Resources",    href: "/performance-marketing-survival-kit" },
 ];
 
 const CTA = { label: "Book Free Audit", href: "/free-growth-audit" };

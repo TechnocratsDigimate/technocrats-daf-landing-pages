@@ -57,7 +57,7 @@ function ServiceIcon({ icon, iconAlt }: { icon: string | null; iconAlt: string }
 
 export function ServicesSection() {
   return (
-    <SectionWrapper bg="ink">
+    <SectionWrapper bg="ink" id="services">
       <SectionHeader
         eyebrow="What We Build"
         headline="What We Build For You"
@@ -86,12 +86,11 @@ export function ServicesSection() {
 
       <div className="mt-10 text-center">
         <Link
-          href="/services"
+          href="/free-growth-audit"
           className="inline-flex items-center gap-1 text-sm font-semibold text-gold transition-colors duration-200 hover:text-gold-soft"
         >
-          View All Services →
+          Need one of these? Book a free audit →
         </Link>
-        {/* /services does not exist yet — will 404 until built */}
       </div>
     </SectionWrapper>
   );

@@ -3,7 +3,7 @@ import { SectionWrapper } from "@/components/ui/SectionWrapper";
 
 export function PmskTeaser() {
   return (
-    <SectionWrapper bg="deep" glow glowColor="blue">
+    <SectionWrapper bg="deep" glow glowColor="blue" id="resources">
       {/* Sub-brand label */}
       <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
         From the Education Arm of Technocrats Digimate

@@ -28,7 +28,7 @@ const nicheAuditCards = [
 
 export function IndustriesSection() {
   return (
-    <SectionWrapper bg="navy">
+    <SectionWrapper bg="navy" id="industries">
       <SectionHeader
         eyebrow="Industries We Serve"
         headline="Built for Industries Where Lead Quality Decides Revenue"
