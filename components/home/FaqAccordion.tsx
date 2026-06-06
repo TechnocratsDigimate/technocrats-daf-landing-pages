@@ -38,6 +38,9 @@ export function FaqAccordion() {
           <h2 className="mt-4 text-center text-3xl font-semibold text-white md:text-4xl">
             Frequently Asked Questions
           </h2>
+          <p className="mt-4 text-center leading-7 text-slate-500">
+            Clear answers before you book your free audit.
+          </p>
 
           <div className="mt-10 divide-y divide-white/10">
             {faqs.map((faq, i) => (

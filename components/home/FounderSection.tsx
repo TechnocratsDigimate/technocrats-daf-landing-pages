@@ -32,7 +32,7 @@ export function FounderSection() {
           </span>
 
           <h2 className="mt-4 text-3xl font-semibold text-white md:text-4xl">
-            Your Funnel Reviewed by Gautam Punj
+            Your Growth System Reviewed by Gautam Punj
           </h2>
 
           {/* Credential badge */}

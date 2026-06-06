@@ -53,38 +53,15 @@ export function PmskTeaser() {
           </div>
         </div>
 
-        {/* Right: Ebook Cover Mockup */}
-        {/* TODO: Replace with actual ebook cover image at /assets/pmsk/cover.png when available */}
+        {/* Right: Real Ebook Cover */}
         <div className="flex justify-center lg:justify-end">
-          <div className="relative w-52 rotate-3 transition-transform duration-500 hover:rotate-0">
-            {/* Book cover card */}
-            <div className="relative rounded-2xl border border-blue-500/25 bg-gradient-to-br from-panel to-[#0a1929] p-8 shadow-[0_18px_60px_rgba(37,99,235,0.15)]">
-              {/* FREE badge */}
-              <span className="absolute right-4 top-4 rounded-full bg-gold px-2 py-0.5 text-xs font-bold text-ink">
-                FREE
-              </span>
-
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-400">
-                Performance Marketing
-              </p>
-              <p className="mt-2 text-3xl font-bold leading-tight text-white">
-                Survival<br />Kit
-              </p>
-
-              {/* Gold divider */}
-              <div className="my-5 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent" />
-
-              <p className="text-sm leading-6 text-slate-400">
-                15 Paid Ads Interview Questions That Expose Fake Experts
-              </p>
-
-              <div className="mt-6 rounded-lg border border-blue-500/20 bg-blue-500/10 px-3 py-2 text-center">
-                <p className="text-xs font-semibold text-blue-400">Technocrats Digimate</p>
-              </div>
-            </div>
-
-            {/* Book spine shadow effect */}
-            <div className="absolute -bottom-3 left-3 right-3 h-4 rounded-b-2xl bg-black/40 blur-md" />
+          <div className="w-full max-w-[220px] lg:max-w-[260px]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/assets/pmsk/cover.png"
+              alt="Performance Marketing Survival Kit — Free Guide by Technocrats Digimate"
+              className="w-full rotate-3 rounded-2xl shadow-[0_24px_64px_rgba(37,99,235,0.2)] transition-transform duration-500 hover:rotate-0"
+            />
           </div>
         </div>
 

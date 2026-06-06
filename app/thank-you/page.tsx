@@ -78,6 +78,13 @@ function AuditVersion({
   return (
     <main className="bg-ink px-5 pb-16 pt-28 text-white">
       <div className="mx-auto max-w-7xl">
+        {/* Success icon */}
+        <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full border border-gold/30 bg-gold/10">
+          <svg className="h-7 w-7 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+        </div>
+
         {/* Eyebrow */}
         <p className="text-sm font-semibold uppercase tracking-[0.22em] text-gold">
           Request Confirmed

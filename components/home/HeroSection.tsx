@@ -25,7 +25,7 @@ const statusTextClass = {
   red: "text-red-400"
 };
 
-const trustItems = ["No generic pitch", "Diagnosis first", "SQL over CPL"];
+const trustItems = ["No generic pitch", "Diagnosis first", "SQL over CPL", "Founder-led audit"];
 
 export function HeroSection() {
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;

@@ -49,7 +49,6 @@ const FOR_YOU_IF = [
 ];
 
 const PROOF_STATS = [
-  // TODO: Replace with verified, approved data before publishing
   { stat: "15", label: "Interview Questions", sub: "Covering Meta, Google, tracking, and CRO" },
   { stat: "5", label: "Chapters", sub: "From first principles to final audit checklist" },
   { stat: "Free", label: "Forever", sub: "No course upsell. No paywall. Just the guide." },
@@ -111,7 +110,11 @@ export default function PmskPage() {
                 Free — No Credit Card
               </div>
 
-              <h1 className="mt-5 text-4xl font-semibold leading-tight text-white md:text-5xl">
+              <p className="mt-4 text-sm font-medium italic text-slate-500">
+                Ads Manager is easy. The job isn&apos;t. We train for the hard part.
+              </p>
+
+              <h1 className="mt-3 text-4xl font-semibold leading-tight text-white md:text-5xl">
                 15 Questions That{" "}
                 <span className="bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent">
                   Expose Fake Performance Marketers
@@ -156,7 +159,6 @@ export default function PmskPage() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {PROOF_STATS.map((item) => (
               <div key={item.label} className="text-center">
-                {/* TODO: Replace stat values with verified data before publishing */}
                 <p className="text-4xl font-bold text-blue-400">{item.stat}</p>
                 <p className="mt-1 font-medium text-white">{item.label}</p>
                 <p className="mt-1 text-sm text-slate-500">{item.sub}</p>

@@ -52,7 +52,7 @@ const AUDIT_AREAS = [
 const WHAT_YOU_GET = [
   "A written summary of every issue found — no fluff, no generic advice",
   "Specific fixes ranked by revenue impact, not complexity",
-  "Your estimated CPL reduction if fixes are applied",
+  "Priority fixes ranked by potential revenue impact — with clear reasoning behind each one",
   "A clear view of where your funnel is leaking leads right now",
   "A 30-minute debrief call with Gautam Punj — questions answered, next steps discussed",
 ];

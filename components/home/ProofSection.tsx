@@ -84,7 +84,7 @@ export function ProofSection() {
       {/* Bottom CTA */}
       <div className="mt-8 text-center">
         <a
-          href="#audit-form"
+          href="/free-growth-audit"
           className="inline-flex items-center gap-1 text-sm font-semibold text-gold transition-colors duration-200 hover:text-gold-soft"
         >
           Want us to measure this for your campaign? Book a free audit →
