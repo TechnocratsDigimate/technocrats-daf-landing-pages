@@ -55,6 +55,8 @@ const COMING_SOON = [
     href: "/free-growth-audit",
     whatsapp: false,
     accentColor: "gold" as const,
+    live: true,
+    previewHref: "/assets/audit/21-point-lead-leakage-audit.pdf",
   },
   {
     keyword: "FIX",
@@ -333,28 +335,42 @@ export default function ResourcesPage() {
             {COMING_SOON.map((res) => (
               <div
                 key={res.keyword}
-                className="flex flex-col rounded-2xl border border-white/[0.07] bg-white/[0.02] p-6 transition-colors duration-200 hover:border-white/[0.12] hover:bg-white/[0.04]"
+                className={`flex flex-col rounded-2xl border p-6 transition-colors duration-200 ${
+                  res.live
+                    ? "border-gold/25 bg-gold/[0.03] hover:border-gold/40 hover:bg-gold/[0.05]"
+                    : "border-white/[0.07] bg-white/[0.02] hover:border-white/[0.12] hover:bg-white/[0.04]"
+                }`}
               >
                 {/* Top row */}
                 <div className="mb-4 flex items-center justify-between gap-3">
-                  <span className="rounded-md border border-white/10 bg-white/[0.04] px-2.5 py-0.5 font-mono text-xs font-bold tracking-wider text-slate-500">
+                  <span className={`rounded-md border px-2.5 py-0.5 font-mono text-xs font-bold tracking-wider ${
+                    res.live
+                      ? "border-gold/30 bg-gold/[0.08] text-gold"
+                      : "border-white/10 bg-white/[0.04] text-slate-500"
+                  }`}>
                     {res.keyword}
                   </span>
-                  <span className="rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-0.5 text-xs font-medium text-slate-600">
-                    Coming Soon
-                  </span>
+                  {res.live ? (
+                    <span className="rounded-full border border-gold/30 bg-gold/10 px-2.5 py-0.5 text-xs font-semibold text-gold">
+                      Live Free Checklist
+                    </span>
+                  ) : (
+                    <span className="rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-0.5 text-xs font-medium text-slate-600">
+                      Coming Soon
+                    </span>
+                  )}
                 </div>
 
                 {/* Title */}
-                <h3 className="mb-2 font-semibold leading-snug text-slate-400">
+                <h3 className={`mb-2 font-semibold leading-snug ${res.live ? "text-white" : "text-slate-400"}`}>
                   {res.title}
                 </h3>
 
                 {/* Audience */}
-                <p className="mb-3 text-xs text-slate-600">{res.audience}</p>
+                <p className={`mb-3 text-xs ${res.live ? "text-slate-500" : "text-slate-600"}`}>{res.audience}</p>
 
                 {/* Description */}
-                <p className="mb-6 flex-1 text-sm leading-6 text-slate-600">{res.desc}</p>
+                <p className={`mb-6 flex-1 text-sm leading-6 ${res.live ? "text-slate-400" : "text-slate-600"}`}>{res.desc}</p>
 
                 {/* CTA */}
                 {res.whatsapp ? (
@@ -368,12 +384,28 @@ export default function ResourcesPage() {
                     {res.cta} →
                   </TrackedAnchor>
                 ) : (
-                  <Link
-                    href={res.href!}
-                    className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-slate-500 transition-colors duration-200 hover:text-slate-300"
-                  >
-                    {res.cta} →
-                  </Link>
+                  <div className="mt-auto flex flex-col gap-2">
+                    <Link
+                      href={res.href!}
+                      className={`inline-flex items-center gap-1 text-sm font-semibold transition-colors duration-200 ${
+                        res.live
+                          ? "text-gold hover:text-gold-soft"
+                          : "text-slate-500 hover:text-slate-300"
+                      }`}
+                    >
+                      {res.cta} →
+                    </Link>
+                    {res.live && res.previewHref && (
+                      <a
+                        href={res.previewHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 transition-colors duration-200 hover:text-slate-300"
+                      >
+                        Preview Checklist ↗
+                      </a>
+                    )}
+                  </div>
                 )}
               </div>
             ))}

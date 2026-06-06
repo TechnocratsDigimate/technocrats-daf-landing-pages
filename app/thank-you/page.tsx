@@ -131,6 +131,31 @@ function AuditVersion({
           ))}
         </ol>
 
+        {/* Checklist download */}
+        <div className="mt-10 rounded-2xl border border-gold/20 bg-gold/[0.04] p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold">
+            Included Free — Your Bonus
+          </p>
+          <h2 className="mt-2 text-xl font-semibold text-white">
+            Your 21-Point Lead Leakage Checklist is ready.
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">
+            Use this checklist to self-audit your ads, landing page, tracking, WhatsApp follow-up, CRM visibility, and sales handoff before your audit call.
+          </p>
+          <a
+            href="/assets/audit/21-point-lead-leakage-audit.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            download="21_Point_Lead_Leakage_Audit_Technocrats_Digimate.pdf"
+            className="mt-4 inline-flex items-center gap-2 rounded-md bg-gold px-5 py-3 text-sm font-semibold text-ink transition-all duration-200 hover:bg-gold-soft hover:shadow-[0_0_20px_rgba(214,168,79,0.3)]"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            Download Checklist
+          </a>
+        </div>
+
         {/* Booking + WhatsApp */}
         <ThankYouActions name={name} niche={niche} />
 
