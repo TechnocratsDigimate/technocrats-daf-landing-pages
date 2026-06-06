@@ -7,7 +7,7 @@ import { useState } from "react";
 const NAV_LINKS = [
   { label: "Services",     href: "/#services" },
   { label: "Case Studies", href: "/#proof" },
-  { label: "Resources",    href: "/performance-marketing-survival-kit" },
+  { label: "Resources",    href: "/resources" },
 ];
 
 const CTA = { label: "Book Free Audit", href: "/free-growth-audit" };
