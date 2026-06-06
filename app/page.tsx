@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { BrandHeader } from "@/components/BrandHeader";
 
 export default function HomePage() {
   return (
-    <main className="bg-ink px-5 py-14 text-white">
+    <>
+      <BrandHeader />
+      <main className="bg-ink px-5 pb-14 pt-28 text-white">
       <div className="mx-auto max-w-4xl">
         <p className="text-sm font-semibold uppercase tracking-[0.22em] text-gold">
           Technocrats Digimate Pvt Ltd
@@ -29,5 +32,6 @@ export default function HomePage() {
         </div>
       </div>
     </main>
+    </>
   );
 }
