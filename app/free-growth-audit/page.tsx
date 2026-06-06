@@ -9,9 +9,20 @@ import { AuditForm } from "./AuditForm";
 import { TrackedAnchor } from "@/components/ui/TrackedAnchor";
 
 export const metadata: Metadata = {
-  title: "Free Growth Audit | Technocrats Digimate",
+  title: "Free Growth Audit for Lead Generation Funnels | Technocrats Digimate",
   description:
-    "Book a free growth audit with Technocrats Digimate. We review your Meta Ads, Google Ads, landing page, tracking, and WhatsApp follow-up — then show you exactly what to fix. No pitch. No obligation.",
+    "Get a free audit of your ads, landing page, tracking, WhatsApp follow-up, CRM visibility, and lead quality.",
+  alternates: {
+    canonical: "https://technocratsdigimate.com/free-growth-audit"
+  },
+  openGraph: {
+    title: "Free Growth Audit for Lead Generation Funnels | Technocrats Digimate",
+    description:
+      "Get a free audit of your ads, landing page, tracking, WhatsApp follow-up, CRM visibility, and lead quality.",
+    url: "https://technocratsdigimate.com/free-growth-audit",
+    siteName: "Technocrats Digimate",
+    type: "website"
+  }
 };
 
 // ─── Static data ────────────────────────────────────────────────────────────

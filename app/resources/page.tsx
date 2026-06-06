@@ -6,9 +6,20 @@ import { TrackedAnchor } from "@/components/ui/TrackedAnchor";
 import { TrackedPdfLink } from "@/components/ui/TrackedPdfLink";
 
 export const metadata: Metadata = {
-  title: "Resource Library | Technocrats Digimate",
+  title: "Free Performance Marketing Resources | Technocrats Digimate",
   description:
-    "Practical guides and audit tools for people who run paid media — whether you're learning the craft or running a business that depends on it.",
+    "Get practical performance marketing guides, paid ads interview resources, and lead leakage audit tools from Technocrats Digimate.",
+  alternates: {
+    canonical: "https://technocratsdigimate.com/resources"
+  },
+  openGraph: {
+    title: "Free Performance Marketing Resources | Technocrats Digimate",
+    description:
+      "Get practical performance marketing guides, paid ads interview resources, and lead leakage audit tools from Technocrats Digimate.",
+    url: "https://technocratsdigimate.com/resources",
+    siteName: "Technocrats Digimate",
+    type: "website"
+  }
 };
 
 // ─── Data ────────────────────────────────────────────────────────────────────

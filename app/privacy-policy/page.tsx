@@ -4,7 +4,19 @@ import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Privacy Policy | Technocrats Digimate",
-  description: "Privacy policy for Technocrats Digimate diagnostic audit funnel pages."
+  description:
+    "Read the privacy policy for Technocrats Digimate and learn how user information is collected, used, and protected.",
+  alternates: {
+    canonical: "https://technocratsdigimate.com/privacy-policy"
+  },
+  openGraph: {
+    title: "Privacy Policy | Technocrats Digimate",
+    description:
+      "Read the privacy policy for Technocrats Digimate and learn how user information is collected, used, and protected.",
+    url: "https://technocratsdigimate.com/privacy-policy",
+    siteName: "Technocrats Digimate",
+    type: "website"
+  }
 };
 
 const policySections = [

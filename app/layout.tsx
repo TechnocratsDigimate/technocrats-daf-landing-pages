@@ -4,6 +4,7 @@ import { TrackingScripts } from "@/components/TrackingScripts";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://technocratsdigimate.com"),
   title: "Technocrats Digimate | Diagnostic Growth Audit",
   description:
     "Diagnostic audit funnels for real estate and study abroad businesses running paid ads without enough qualified leads.",

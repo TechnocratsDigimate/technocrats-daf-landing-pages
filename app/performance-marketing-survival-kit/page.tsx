@@ -5,9 +5,20 @@ import { PmskForm } from "./PmskForm";
 import { TrackedAnchor } from "@/components/ui/TrackedAnchor";
 
 export const metadata: Metadata = {
-  title: "Free Performance Marketing Survival Kit | Technocrats Digimate",
+  title: "15 Paid Ads Interview Questions That Expose Fake Experts | Technocrats Digimate",
   description:
-    "Download the free Performance Marketing Survival Kit — 15 paid ads interview questions that expose fake experts. Free guide for marketers, job seekers, and business owners who want to understand what good campaign management actually looks like.",
+    "Get the free PMSK guide with 15 paid ads interview questions, answer frameworks, and diagnostic thinking for students, freelancers, and junior marketers.",
+  alternates: {
+    canonical: "https://technocratsdigimate.com/performance-marketing-survival-kit"
+  },
+  openGraph: {
+    title: "15 Paid Ads Interview Questions That Expose Fake Experts | Technocrats Digimate",
+    description:
+      "Get the free PMSK guide with 15 paid ads interview questions, answer frameworks, and diagnostic thinking for students, freelancers, and junior marketers.",
+    url: "https://technocratsdigimate.com/performance-marketing-survival-kit",
+    siteName: "Technocrats Digimate",
+    type: "website"
+  }
 };
 
 // ─── Static data ────────────────────────────────────────────────────────────
