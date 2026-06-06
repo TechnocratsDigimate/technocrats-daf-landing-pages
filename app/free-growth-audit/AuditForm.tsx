@@ -222,13 +222,6 @@ export function AuditForm() {
     setSubmitting(true);
     setSubmitError("");
 
-    trackLeadSubmitted("free-growth-audit");
-    trackEvent("audit_form_complete", {
-      page: "free-growth-audit",
-      niche: form.industry,
-      budget: form.budget,
-    });
-
     try {
       const res = await fetch("/api/leads", {
         method: "POST",
@@ -237,6 +230,7 @@ export function AuditForm() {
           niche: "Free Growth Audit",
           page: "free-growth-audit",
           pagePath: "/free-growth-audit",
+          formType: "free_growth_audit",
           consentStatus: "contact_consent_accepted",
           answers: {
             name: form.name.trim(),
@@ -263,6 +257,14 @@ export function AuditForm() {
         setSubmitting(false);
         return;
       }
+
+      // Fire tracking only after confirmed API success
+      trackLeadSubmitted("free-growth-audit");
+      trackEvent("audit_form_complete", {
+        page: "free-growth-audit",
+        niche: form.industry,
+        budget: form.budget,
+      });
 
       router.push(
         `/thank-you?type=audit&name=${encodeURIComponent(form.name.trim())}`

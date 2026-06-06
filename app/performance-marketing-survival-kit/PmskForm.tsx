@@ -112,9 +112,6 @@ export function PmskForm() {
     setSubmitting(true);
     setSubmitError("");
 
-    trackLeadSubmitted("pmsk-lead-magnet");
-    trackEvent("audit_form_complete", { page: "pmsk" });
-
     try {
       const res = await fetch("/api/leads", {
         method: "POST",
@@ -123,6 +120,7 @@ export function PmskForm() {
           niche: "PMSK Lead Magnet",
           page: "performance-marketing-survival-kit",
           pagePath: "/performance-marketing-survival-kit",
+          formType: "pmsk",
           consentStatus: "contact_consent_accepted",
           answers: {
             name: name.trim(),
@@ -141,6 +139,10 @@ export function PmskForm() {
         setSubmitting(false);
         return;
       }
+
+      // Fire tracking only after confirmed API success
+      trackLeadSubmitted("pmsk-lead-magnet");
+      trackEvent("audit_form_complete", { page: "pmsk" });
 
       router.push(
         `/thank-you?type=ebook&name=${encodeURIComponent(name.trim())}`

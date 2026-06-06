@@ -14,6 +14,7 @@ type LeadRequest = {
   niche?: string;
   page?: string;
   pagePath?: string;
+  formType?: string;
   consentStatus?: string;
   answers?: Record<string, string | string[]>;
   utm?: Record<string, string>;
@@ -85,6 +86,7 @@ function buildLeadPayload(body: LeadRequest) {
     utm_campaign: utm.utm_campaign || "",
     utm_content: utm.utm_content || "",
     utm_term: utm.utm_term || "",
+    formType: body.formType || "",
     pagePath: body.pagePath || `/${body.page}`,
     consentStatus: body.consentStatus || "contact_consent_accepted",
     consent: body.consentStatus || "contact_consent_accepted",
