@@ -5,9 +5,9 @@ import { Footer } from "@/components/Footer";
 import { TrackedAnchor } from "@/components/ui/TrackedAnchor";
 
 export const metadata: Metadata = {
-  title: "Free Resources | Technocrats Digimate",
+  title: "Resource Library | Technocrats Digimate",
   description:
-    "Download free performance marketing guides, checklists, and playbooks. Covering Meta Ads, Google Ads, tracking, lead quality, funnels, and campaign troubleshooting.",
+    "Practical guides and audit tools for people who run paid media — whether you're learning the craft or running a business that depends on it.",
 };
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -48,15 +48,18 @@ const CATEGORIES = [
 const COMING_SOON = [
   {
     keyword: "AUDIT",
-    title: "21-Point Lead Leakage Audit Checklist",
-    audience: "Business Owners · Founders · High-Ticket Services",
-    desc: "Find where your ads, landing page, tracking, WhatsApp follow-up, and CRM are leaking leads before they convert.",
-    cta: "Book Free Growth Audit",
+    title: "The 21-Point Lead Leakage Audit",
+    audience: "For founders and business owners in real estate, study abroad, clinics, education, and high-ticket services.",
+    desc: "You may not have an ads problem — you may have a system leakage problem. The same 21-point audit we run on high-ticket accounts to find exactly where ad spend stops turning into qualified sales conversations. Score your own system across ads, landing page, tracking, WhatsApp follow-up, and CRM.",
+    cta: "Get the checklist + free audit",
+    helperText: "Book your free growth audit and get the checklist instantly.",
     href: "/free-growth-audit",
     whatsapp: false,
     accentColor: "gold" as const,
     live: true,
+    label: "For Business Owners",
     previewHref: "/assets/audit/21-point-lead-leakage-audit.pdf",
+    previewLabel: "Preview Checklist",
   },
   {
     keyword: "FIX",
@@ -64,9 +67,14 @@ const COMING_SOON = [
     audience: "Freelancers · Paid Media Teams · Agency Interns",
     desc: "A diagnostic checklist for high CPL, low conversions, creative fatigue, tracking gaps, and sudden CPA spikes.",
     cta: "Notify Me on WhatsApp",
+    helperText: null,
     href: null,
     whatsapp: true,
     accentColor: "blue" as const,
+    live: false,
+    label: null,
+    previewHref: null,
+    previewLabel: null,
   },
   {
     keyword: "TRACK",
@@ -74,9 +82,14 @@ const COMING_SOON = [
     audience: "Marketers · Agencies · Founders",
     desc: "Pixel, CAPI, GA4, GTM, attribution gaps, and CRM mismatch — explained practically for real campaign setups.",
     cta: "Join PMSK List",
+    helperText: null,
     href: "/performance-marketing-survival-kit",
     whatsapp: false,
     accentColor: "blue" as const,
+    live: false,
+    label: null,
+    previewHref: null,
+    previewLabel: null,
   },
   {
     keyword: "GOOGLE",
@@ -84,9 +97,14 @@ const COMING_SOON = [
     audience: "Beginners · Freelancers · Business Owners",
     desc: "A practical beginner guide to Search campaigns, PMax, match types, negative keywords, and conversion tracking.",
     cta: "Join PMSK List",
+    helperText: null,
     href: "/performance-marketing-survival-kit",
     whatsapp: false,
     accentColor: "blue" as const,
+    live: false,
+    label: null,
+    previewHref: null,
+    previewLabel: null,
   },
   {
     keyword: "META",
@@ -94,9 +112,14 @@ const COMING_SOON = [
     audience: "Beginners · Freelancers · Business Owners",
     desc: "A practical guide to campaign objectives, audiences, creatives, Pixel, CAPI, and lead generation that converts.",
     cta: "Join PMSK List",
+    helperText: null,
     href: "/performance-marketing-survival-kit",
     whatsapp: false,
     accentColor: "blue" as const,
+    live: false,
+    label: null,
+    previewHref: null,
+    previewLabel: null,
   },
   {
     keyword: "30DAY",
@@ -104,16 +127,21 @@ const COMING_SOON = [
     audience: "Students · Career Switchers · Job Seekers",
     desc: "A 30-day roadmap to build paid ads skills, create portfolio proof, and walk into any interview with confidence.",
     cta: "Join PMSK List",
+    helperText: null,
     href: "/performance-marketing-survival-kit",
     whatsapp: false,
     accentColor: "blue" as const,
+    live: false,
+    label: null,
+    previewHref: null,
+    previewLabel: null,
   },
 ];
 
 const FAQS = [
   {
     q: "Are these resources free?",
-    a: "The currently live PMSK guide is completely free — no credit card, no paywall. Future resources may be free, gated, or part of a workshop or course bundle depending on the depth of content.",
+    a: "Both live resources — the PMSK guide and the 21-Point Audit Checklist — are completely free. No credit card, no paywall. Future resources may be free, gated, or part of a workshop bundle depending on depth.",
   },
   {
     q: "Who are these resources for?",
@@ -121,11 +149,11 @@ const FAQS = [
   },
   {
     q: "Where should I start?",
-    a: "If you are a marketer, freelancer, or job seeker — start with the PMSK guide. If you are a business owner already running ads — start with the Free Growth Audit. Both are free.",
+    a: "If you are a marketer, freelancer, or job seeker — start with the PMSK interview guide. If you are a business owner already running ads — start with the free growth audit and 21-point checklist. Both are free.",
   },
   {
     q: "Will more resources be added?",
-    a: "Yes. More playbooks, checklists, and guides will be added gradually. The best way to stay updated is to follow us on WhatsApp after downloading the PMSK guide.",
+    a: "Yes. More playbooks, checklists, and guides will be added gradually. The best way to stay updated is to follow us on WhatsApp after accessing any resource.",
   },
 ];
 
@@ -156,14 +184,14 @@ export default function ResourcesPage() {
             </div>
 
             <h1 className="mt-6 text-4xl font-semibold leading-tight text-white md:text-5xl lg:text-[3.25rem]">
-              Performance Marketing Resources{" "}
+              The Technocrats Digimate{" "}
               <span className="bg-gradient-to-r from-gold to-gold-soft bg-clip-text text-transparent">
-                for Operators, Founders &amp; Growth Teams
+                Resource Library
               </span>
             </h1>
 
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-400">
-              Download practical guides, checklists, and playbooks on Google Ads, Meta Ads, tracking, funnels, lead quality, and campaign troubleshooting.
+              Practical guides and audit tools for people who run paid media — whether you&apos;re learning the craft or running a business that depends on it. Pick the one built for you.
             </p>
 
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
@@ -171,7 +199,7 @@ export default function ResourcesPage() {
                 href="#resources-library"
                 className="w-full rounded-md bg-gold px-6 py-3.5 text-center font-semibold text-ink transition-all duration-200 hover:bg-gold-soft hover:shadow-[0_0_20px_rgba(214,168,79,0.35)] sm:w-auto"
               >
-                Explore Free Resources →
+                Browse the Library →
               </Link>
               <Link
                 href="/free-growth-audit"
@@ -184,7 +212,7 @@ export default function ResourcesPage() {
             {/* Quick stats */}
             <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
               {[
-                { n: "1", label: "Live Resource" },
+                { n: "2", label: "Live Resources" },
                 { n: "6", label: "Total Planned" },
                 { n: "Free", label: "Always Free to Start" },
               ].map((s) => (
@@ -222,14 +250,31 @@ export default function ResourcesPage() {
         </div>
       </section>
 
-      {/* ── Featured Resource ────────────────────────────────────────────── */}
+      {/* ── Audience Splitter ────────────────────────────────────────────── */}
+      <div className="border-b border-white/[0.06] bg-ink px-5 py-5 md:px-8 lg:px-10">
+        <div className="mx-auto flex max-w-[1320px] flex-col items-center justify-center gap-2 text-sm sm:flex-row sm:gap-8">
+          <span className="flex items-center gap-2 text-slate-400">
+            <span className="font-semibold text-blue-400">Learning paid media?</span>
+            <span className="text-slate-600">→</span>
+            Start with the interview guide.
+          </span>
+          <span className="hidden h-4 w-px bg-white/10 sm:block" aria-hidden />
+          <span className="flex items-center gap-2 text-slate-400">
+            <span className="font-semibold text-gold">Running a business?</span>
+            <span className="text-slate-600">→</span>
+            Start with the audit checklist.
+          </span>
+        </div>
+      </div>
+
+      {/* ── Featured Resource (PMSK) ─────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-ink py-16 md:py-24">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_70%_50%_at_50%_50%,rgba(59,130,246,0.05)_0%,transparent_70%)]" />
         <div className="relative mx-auto max-w-[1320px] px-5 md:px-8 lg:px-10">
 
           <div className="mb-10 text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-400">
-              Available Now
+              Available Now · For Learners
             </p>
             <h2 className="mt-3 text-3xl font-semibold text-white md:text-4xl">
               Featured Resource
@@ -249,32 +294,38 @@ export default function ResourcesPage() {
 
               <div className="grid items-center gap-8 lg:grid-cols-[1fr_auto]">
                 <div>
-                  {/* Keyword */}
-                  <span className="rounded-md border border-blue-500/30 bg-blue-500/10 px-2.5 py-0.5 font-mono text-xs font-bold tracking-wider text-blue-400">
-                    ADS
-                  </span>
+                  {/* Keyword + label */}
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-md border border-blue-500/30 bg-blue-500/10 px-2.5 py-0.5 font-mono text-xs font-bold tracking-wider text-blue-400">
+                      ADS
+                    </span>
+                    <span className="rounded-md border border-blue-500/20 bg-blue-500/[0.06] px-2.5 py-0.5 text-xs font-semibold text-blue-300">
+                      For Learners
+                    </span>
+                  </div>
 
                   <h3 className="mt-4 text-2xl font-semibold leading-snug text-white md:text-3xl">
                     15 Paid Ads Interview Questions That Expose Fake Experts
                   </h3>
 
                   <p className="mt-2 text-sm font-medium text-slate-500">
-                    Students · Job Seekers · Freelancers · Junior Marketers
+                    For students, job seekers, freelancers, junior marketers, and agency interns.
                   </p>
 
                   <p className="mt-4 leading-8 text-slate-400">
-                    A diagnostic field guide that helps you answer real paid ads interview questions like an operator — not a button-pusher. Covers Meta Ads, Google Ads, tracking, CRO, and a 15-minute funnel audit checklist.
+                    Ads Manager is easy. The job isn&apos;t. A diagnostic field guide for anyone preparing for a paid media role — the 15 questions interviewers use to separate operators from button-pushers, with the weak answer, the strong framework, and the pro insight for each.
                   </p>
 
                   {/* Feature list */}
                   <ul className="mt-5 space-y-2">
                     {[
-                      "5 chapters · 15 ready-to-use questions",
-                      "Meta Ads · Google Ads · Tracking · CRO",
-                      "Bonus: 15-minute funnel audit checklist",
+                      "How to answer \"CTR is high, conversions are low\" like an operator, not a guesser",
+                      "The 5-step formula that works on questions you've never seen",
+                      "Pixel vs CAPI, GA4 vs platform attribution — explained for interviews",
+                      "A self-scoring checklist to find out if you're actually interview-ready",
                     ].map((item) => (
-                      <li key={item} className="flex items-center gap-3 text-sm text-slate-300">
-                        <svg className="h-4 w-4 flex-shrink-0 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <li key={item} className="flex items-start gap-3 text-sm text-slate-300">
+                        <svg className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                         </svg>
                         {item}
@@ -284,12 +335,15 @@ export default function ResourcesPage() {
 
                   {/* CTAs */}
                   <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <Link
-                      href="/performance-marketing-survival-kit"
-                      className="rounded-md bg-blue-600 px-6 py-3 text-center font-semibold text-white transition-all duration-200 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]"
-                    >
-                      Download Interview Guide →
-                    </Link>
+                    <div className="flex flex-col gap-1">
+                      <Link
+                        href="/performance-marketing-survival-kit"
+                        className="rounded-md bg-blue-600 px-6 py-3 text-center font-semibold text-white transition-all duration-200 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+                      >
+                        Get the free guide →
+                      </Link>
+                      <p className="text-center text-xs text-slate-600">Quick form, then instant download.</p>
+                    </div>
                     <a
                       href="/assets/pmsk/pmsk-paid-ads-interview-questions.pdf"
                       target="_blank"
@@ -316,18 +370,18 @@ export default function ResourcesPage() {
         </div>
       </section>
 
-      {/* ── Coming Soon Grid ──────────────────────────────────────────────── */}
+      {/* ── Resource Library Grid ─────────────────────────────────────────── */}
       <section id="resources-library" className="bg-navy py-16 md:py-24">
         <div className="mx-auto max-w-[1320px] px-5 md:px-8 lg:px-10">
           <div className="mb-12 text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
-              Coming Soon
+              The Library
             </p>
             <h2 className="mt-3 text-3xl font-semibold text-white md:text-4xl">
               More Resources on the Way
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-slate-500">
-              Follow us on WhatsApp after downloading the PMSK guide — you&apos;ll be first to know when each one drops.
+              Follow us on WhatsApp after accessing any resource — you&apos;ll be first to know when each one drops.
             </p>
           </div>
 
@@ -343,13 +397,20 @@ export default function ResourcesPage() {
               >
                 {/* Top row */}
                 <div className="mb-4 flex items-center justify-between gap-3">
-                  <span className={`rounded-md border px-2.5 py-0.5 font-mono text-xs font-bold tracking-wider ${
-                    res.live
-                      ? "border-gold/30 bg-gold/[0.08] text-gold"
-                      : "border-white/10 bg-white/[0.04] text-slate-500"
-                  }`}>
-                    {res.keyword}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className={`rounded-md border px-2.5 py-0.5 font-mono text-xs font-bold tracking-wider ${
+                      res.live
+                        ? "border-gold/30 bg-gold/[0.08] text-gold"
+                        : "border-white/10 bg-white/[0.04] text-slate-500"
+                    }`}>
+                      {res.keyword}
+                    </span>
+                    {res.live && res.label && (
+                      <span className="rounded-md border border-gold/20 bg-gold/[0.05] px-2 py-0.5 text-xs font-semibold text-gold/80">
+                        {res.label}
+                      </span>
+                    )}
+                  </div>
                   {res.live ? (
                     <span className="rounded-full border border-gold/30 bg-gold/10 px-2.5 py-0.5 text-xs font-semibold text-gold">
                       Live Free Checklist
@@ -367,7 +428,7 @@ export default function ResourcesPage() {
                 </h3>
 
                 {/* Audience */}
-                <p className={`mb-3 text-xs ${res.live ? "text-slate-500" : "text-slate-600"}`}>{res.audience}</p>
+                <p className={`mb-3 text-xs leading-5 ${res.live ? "text-slate-500" : "text-slate-600"}`}>{res.audience}</p>
 
                 {/* Description */}
                 <p className={`mb-6 flex-1 text-sm leading-6 ${res.live ? "text-slate-400" : "text-slate-600"}`}>{res.desc}</p>
@@ -384,7 +445,7 @@ export default function ResourcesPage() {
                     {res.cta} →
                   </TrackedAnchor>
                 ) : (
-                  <div className="mt-auto flex flex-col gap-2">
+                  <div className="mt-auto flex flex-col gap-1.5">
                     <Link
                       href={res.href!}
                       className={`inline-flex items-center gap-1 text-sm font-semibold transition-colors duration-200 ${
@@ -395,6 +456,9 @@ export default function ResourcesPage() {
                     >
                       {res.cta} →
                     </Link>
+                    {res.live && res.helperText && (
+                      <p className="text-xs text-slate-600">{res.helperText}</p>
+                    )}
                     {res.live && res.previewHref && (
                       <a
                         href={res.previewHref}
@@ -402,7 +466,7 @@ export default function ResourcesPage() {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 transition-colors duration-200 hover:text-slate-300"
                       >
-                        Preview Checklist ↗
+                        {res.previewLabel ?? "Preview"} ↗
                       </a>
                     )}
                   </div>
@@ -413,7 +477,7 @@ export default function ResourcesPage() {
         </div>
       </section>
 
-      {/* ── Business Owner CTA ───────────────────────────────────────────── */}
+      {/* ── Closing Strip ────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden border-t border-gold/15 bg-ink py-20 md:py-28">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_60%_at_50%_100%,rgba(214,168,79,0.10)_0%,transparent_65%)]" />
         <div className="agency-grid absolute inset-0 pointer-events-none opacity-20" />
@@ -431,7 +495,7 @@ export default function ResourcesPage() {
           </h2>
 
           <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-slate-400">
-            Get your ads, landing page, tracking, WhatsApp follow-up, and CRM visibility reviewed by Technocrats Digimate. Diagnosis first — no pitch until you ask.
+            Technocrats Digimate builds predictable lead-generation systems for high-ticket businesses — connecting ads, landing pages, tracking, WhatsApp follow-up, CRM, and reporting.
           </p>
 
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
@@ -484,14 +548,14 @@ export default function ResourcesPage() {
             <div className="mt-10 rounded-2xl border border-gold/15 bg-gold/[0.04] p-6 text-center">
               <p className="font-medium text-white">Ready to start?</p>
               <p className="mt-1 text-sm text-slate-500">
-                Download the free PMSK guide or book your growth audit — both take under 2 minutes.
+                Get the free interview guide or book your growth audit — both take under 2 minutes.
               </p>
               <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                 <Link
                   href="/performance-marketing-survival-kit"
                   className="rounded-md border border-blue-500/40 px-5 py-2.5 text-sm font-semibold text-blue-400 transition-all duration-200 hover:border-blue-500 hover:bg-blue-500/10"
                 >
-                  Download PMSK Guide →
+                  Get the free guide →
                 </Link>
                 <Link
                   href="/free-growth-audit"
