@@ -204,6 +204,7 @@ function EbookVersion({ name }: { name: string }) {
             href={PMSK_PDF_URL}
             target="_blank"
             rel="noopener noreferrer"
+            download="15_Paid_Ads_Interview_Questions_Technocrats_Digimate.pdf"
             className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-5 py-3.5 text-center font-semibold text-white transition-all duration-200 hover:bg-blue-500 hover:shadow-[0_0_24px_rgba(59,130,246,0.35)]"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
