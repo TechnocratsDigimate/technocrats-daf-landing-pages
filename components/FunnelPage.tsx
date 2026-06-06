@@ -8,7 +8,7 @@ import { MultiStepAuditForm } from "@/components/MultiStepAuditForm";
 import { WhatsAppLink } from "@/components/WhatsAppLink";
 import type { FunnelConfig } from "@/lib/funnel-data";
 import { processSteps } from "@/lib/funnel-data";
-import { trackPageView } from "@/lib/tracking";
+import { trackEvent } from "@/lib/tracking";
 
 function CaseFrameworkVisual({
   niche,
@@ -320,8 +320,10 @@ export function FunnelPage({ funnel }: { funnel: FunnelConfig }) {
     : processSteps;
 
   useEffect(() => {
-    trackPageView(funnel.niche);
-  }, [funnel.niche]);
+    // TrackingScripts fires the global PageView — we must not duplicate it.
+    // Fire a niche-specific named event instead so funnels are identifiable in GA4 / Meta.
+    trackEvent("funnel_page_view", { niche: funnel.niche, page: funnel.slug });
+  }, [funnel.niche, funnel.slug]);
 
   return (
     <>

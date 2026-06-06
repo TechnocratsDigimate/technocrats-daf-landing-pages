@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { ThankYouActions } from "@/components/ThankYouActions";
 import { ThankYouTracker } from "@/components/ThankYouTracker";
 import { TrackedAnchor } from "@/components/ui/TrackedAnchor";
+import { TrackedPdfLink } from "@/components/ui/TrackedPdfLink";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -142,18 +143,21 @@ function AuditVersion({
           <p className="mt-2 text-sm leading-6 text-slate-400">
             This is the exact framework we&apos;ll use on your account. Run through it before we talk — the points you can&apos;t tick are usually where the leaks are, and it makes our review far more useful.
           </p>
-          <a
+          <TrackedPdfLink
             href="/assets/audit/21-point-lead-leakage-audit.pdf"
             target="_blank"
             rel="noopener noreferrer"
             download="21_Point_Lead_Leakage_Audit_Technocrats_Digimate.pdf"
             className="mt-4 inline-flex items-center gap-2 rounded-md bg-gold px-5 py-3 text-sm font-semibold text-ink transition-all duration-200 hover:bg-gold-soft hover:shadow-[0_0_20px_rgba(214,168,79,0.3)]"
+            eventName="pdf_download"
+            resource="audit_checklist"
+            page="thank-you"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
             </svg>
             Download the checklist (PDF)
-          </a>
+          </TrackedPdfLink>
         </div>
 
         {/* Booking + WhatsApp */}
@@ -225,18 +229,21 @@ function EbookVersion({ name }: { name: string }) {
           </div>
 
           {/* Download button */}
-          <a
+          <TrackedPdfLink
             href={PMSK_PDF_URL}
             target="_blank"
             rel="noopener noreferrer"
             download="15_Paid_Ads_Interview_Questions_Technocrats_Digimate.pdf"
             className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-5 py-3.5 text-center font-semibold text-white transition-all duration-200 hover:bg-blue-500 hover:shadow-[0_0_24px_rgba(59,130,246,0.35)]"
+            eventName="pdf_download"
+            resource="pmsk"
+            page="thank-you"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
             </svg>
             Download the guide (PDF)
-          </a>
+          </TrackedPdfLink>
           <p className="mt-3 text-center text-xs leading-5 text-slate-600">
             Opens or downloads depending on your browser. Save it to your phone so you can review before your next interview.
           </p>

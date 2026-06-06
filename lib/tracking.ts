@@ -345,7 +345,10 @@ type ConversionEventName =
   | "audit_form_start"
   | "audit_form_complete"
   | "book_call"
-  | "whatsapp_click";
+  | "whatsapp_click"
+  | "pdf_download"
+  | "resource_preview_click"
+  | "funnel_page_view";
 
 type ConversionEventProperties = {
   page?: string;
@@ -363,4 +366,9 @@ export function trackEvent(event: ConversionEventName, properties: ConversionEve
   const w = window as WindowWithTracking;
   w.dataLayer = w.dataLayer || [];
   w.dataLayer.push({ event, ...properties });
+  // Forward to Meta Pixel as a custom event so conversions are visible
+  // in Meta Events Manager without requiring GTM custom event tags.
+  if (w.fbq && process.env.NEXT_PUBLIC_META_PIXEL_ID) {
+    w.fbq("trackCustom", event, properties);
+  }
 }

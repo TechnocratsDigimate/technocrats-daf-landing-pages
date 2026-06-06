@@ -311,6 +311,7 @@ export function MultiStepAuditForm({ funnel }: { funnel: FunnelConfig }) {
           niche: funnel.niche,
           page: funnel.slug,
           pagePath: `/${funnel.slug}`,
+          formType: funnel.slug === "real-estate-growth-audit" ? "real_estate" : "study_abroad",
           consentStatus: "contact_consent_accepted",
           answers: normalizedAnswers,
           utm: getStoredUtmParameters()

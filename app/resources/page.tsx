@@ -3,6 +3,7 @@ import Link from "next/link";
 import { BrandHeader } from "@/components/BrandHeader";
 import { Footer } from "@/components/Footer";
 import { TrackedAnchor } from "@/components/ui/TrackedAnchor";
+import { TrackedPdfLink } from "@/components/ui/TrackedPdfLink";
 
 export const metadata: Metadata = {
   title: "Resource Library | Technocrats Digimate",
@@ -60,6 +61,7 @@ const COMING_SOON = [
     label: "For Business Owners",
     previewHref: "/assets/audit/21-point-lead-leakage-audit.pdf",
     previewLabel: "Preview Checklist",
+    previewResource: "audit_checklist",
   },
   {
     keyword: "FIX",
@@ -75,6 +77,7 @@ const COMING_SOON = [
     label: null,
     previewHref: null,
     previewLabel: null,
+    previewResource: null,
   },
   {
     keyword: "TRACK",
@@ -90,6 +93,7 @@ const COMING_SOON = [
     label: null,
     previewHref: null,
     previewLabel: null,
+    previewResource: null,
   },
   {
     keyword: "GOOGLE",
@@ -105,6 +109,7 @@ const COMING_SOON = [
     label: null,
     previewHref: null,
     previewLabel: null,
+    previewResource: null,
   },
   {
     keyword: "META",
@@ -120,6 +125,7 @@ const COMING_SOON = [
     label: null,
     previewHref: null,
     previewLabel: null,
+    previewResource: null,
   },
   {
     keyword: "30DAY",
@@ -135,6 +141,7 @@ const COMING_SOON = [
     label: null,
     previewHref: null,
     previewLabel: null,
+    previewResource: null,
   },
 ];
 
@@ -344,14 +351,16 @@ export default function ResourcesPage() {
                       </Link>
                       <p className="text-center text-xs text-slate-600">Quick form, then instant download.</p>
                     </div>
-                    <a
+                    <TrackedPdfLink
                       href="/assets/pmsk/pmsk-paid-ads-interview-questions.pdf"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-center text-sm font-medium text-slate-500 underline underline-offset-4 transition-colors duration-200 hover:text-slate-300"
+                      eventName="resource_preview_click"
+                      resource="pmsk"
                     >
                       Preview PDF ↗
-                    </a>
+                    </TrackedPdfLink>
                   </div>
                 </div>
 
@@ -459,15 +468,17 @@ export default function ResourcesPage() {
                     {res.live && res.helperText && (
                       <p className="text-xs text-slate-600">{res.helperText}</p>
                     )}
-                    {res.live && res.previewHref && (
-                      <a
+                    {res.live && res.previewHref && res.previewResource && (
+                      <TrackedPdfLink
                         href={res.previewHref}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 transition-colors duration-200 hover:text-slate-300"
+                        eventName="resource_preview_click"
+                        resource={res.previewResource}
                       >
                         {res.previewLabel ?? "Preview"} ↗
-                      </a>
+                      </TrackedPdfLink>
                     )}
                   </div>
                 )}
