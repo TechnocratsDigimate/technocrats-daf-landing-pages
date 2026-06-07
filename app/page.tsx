@@ -33,38 +33,54 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  const organizationJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "ProfessionalService",
-    name: "Technocrats Digimate Pvt Ltd",
-    url: "https://technocratsdigimate.com",
-    serviceType: [
-      "Performance marketing",
-      "Meta Ads management",
-      "Google Ads management",
-      "Lead generation",
-      "Conversion tracking",
-      "Landing page strategy",
-      "Funnel audit",
-      "WhatsApp follow-up systems"
-    ],
-    areaServed: [
-      "India",
-      "Chandigarh",
-      "Mohali",
-      "Panchkula",
-      "Ambala",
-      "Gurgaon",
-      "Dubai",
-      "UAE"
-    ]
-  };
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "Technocrats Digimate Pvt Ltd",
+      url: "https://technocratsdigimate.com",
+      logo: "https://technocratsdigimate.com/assets/brand/logo-white.svg",
+      sameAs: []
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Technocrats Digimate",
+      url: "https://technocratsdigimate.com"
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      name: "Technocrats Digimate Pvt Ltd",
+      url: "https://technocratsdigimate.com",
+      serviceType: [
+        "Performance marketing",
+        "Meta Ads management",
+        "Google Ads management",
+        "Lead generation",
+        "Conversion tracking",
+        "Landing page strategy",
+        "Funnel audit",
+        "WhatsApp follow-up systems"
+      ],
+      areaServed: [
+        "India",
+        "Chandigarh",
+        "Mohali",
+        "Panchkula",
+        "Ambala",
+        "Gurgaon",
+        "Dubai",
+        "UAE"
+      ]
+    }
+  ];
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <BrandHeader />
       <HeroSection />
