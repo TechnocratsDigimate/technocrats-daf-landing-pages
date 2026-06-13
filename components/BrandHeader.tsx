@@ -97,44 +97,41 @@ export function BrandHeader() {
       </div>
 
       {/* ── Mobile menu ──────────────────────────────────────────────────── */}
-      <div
-        className={`overflow-hidden border-b border-white/10 bg-ink/95 backdrop-blur-xl transition-all duration-300 ease-out md:hidden ${
-          menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-        }`}
-        aria-hidden={!menuOpen}
-      >
-        <nav className="mx-auto max-w-[1320px] px-5 pb-5 pt-2" aria-label="Mobile navigation">
-          <ul className="space-y-1">
-            {NAV_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  onClick={closeMenu}
-                  className={`flex items-center justify-between rounded-lg px-4 py-3 text-sm font-medium transition-colors duration-200 ${
-                    isActive(link.href)
-                      ? "bg-gold/10 text-gold"
-                      : "text-slate-300 hover:bg-white/[0.04] hover:text-white"
-                  }`}
-                >
-                  {link.label}
-                  {isActive(link.href) && (
-                    <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-                  )}
-                </Link>
-              </li>
-            ))}
-          </ul>
+      {menuOpen && (
+        <div className="animate-fade-in border-b border-white/10 bg-ink/95 backdrop-blur-xl md:hidden">
+          <nav className="mx-auto max-w-[1320px] px-5 pb-5 pt-2" aria-label="Mobile navigation">
+            <ul className="space-y-1">
+              {NAV_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    onClick={closeMenu}
+                    className={`flex items-center justify-between rounded-lg px-4 py-3 text-sm font-medium transition-colors duration-200 ${
+                      isActive(link.href)
+                        ? "bg-gold/10 text-gold"
+                        : "text-slate-300 hover:bg-white/[0.04] hover:text-white"
+                    }`}
+                  >
+                    {link.label}
+                    {isActive(link.href) && (
+                      <span className="h-1.5 w-1.5 rounded-full bg-gold" />
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
 
-          {/* Mobile CTA */}
-          <Link
-            href={CTA.href}
-            onClick={closeMenu}
-            className="mt-3 block rounded-md bg-gold px-4 py-3 text-center text-sm font-semibold text-ink transition-all duration-200 hover:bg-gold-soft"
-          >
-            {CTA.label} →
-          </Link>
-        </nav>
-      </div>
+            {/* Mobile CTA */}
+            <Link
+              href={CTA.href}
+              onClick={closeMenu}
+              className="mt-3 block rounded-md bg-gold px-4 py-3 text-center text-sm font-semibold text-ink transition-all duration-200 hover:bg-gold-soft"
+            >
+              {CTA.label} →
+            </Link>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

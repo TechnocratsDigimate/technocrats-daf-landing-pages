@@ -67,13 +67,13 @@ export function HeroSection() {
             <div className="mt-8 flex animate-fade-in flex-col gap-3 sm:flex-row">
               <Link
                 href="/free-growth-audit"
-                className="rounded-md bg-gold px-5 py-3 text-center font-semibold text-ink transition-all duration-200 hover:bg-gold-soft hover:shadow-[0_0_20px_rgba(214,168,79,0.35)]"
+                className="block rounded-md bg-gold px-5 py-3 text-center font-semibold text-ink transition-all duration-200 hover:bg-gold-soft hover:shadow-[0_0_20px_rgba(214,168,79,0.35)]"
               >
                 Book Free Growth Audit
               </Link>
               <Link
                 href="/performance-marketing-survival-kit"
-                className="rounded-md border border-gold/40 px-5 py-3 text-center font-semibold text-gold transition-all duration-200 hover:border-gold hover:bg-gold/10"
+                className="block rounded-md border border-gold/40 px-5 py-3 text-center font-semibold text-gold transition-all duration-200 hover:border-gold hover:bg-gold/10"
               >
                 Explore Survival Kit
               </Link>
