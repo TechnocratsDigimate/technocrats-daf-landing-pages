@@ -23,6 +23,11 @@ export const metadata: Metadata = {
     url: canonicalUrl,
     siteName: "Technocrats Digimate",
     type: "website"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: pageTitle,
+    description: pageDescription
   }
 };
 
@@ -70,26 +75,52 @@ const problems = [
   "No repeatable process for ideas, production, publishing, and learning"
 ];
 
-const serviceJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Service",
-  name: "Social Media Marketing",
-  provider: {
-    "@type": "Organization",
-    name: "Technocrats Digimate Pvt Ltd",
-    url: "https://technocratsdigimate.com"
+const serviceJsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Social Media Marketing",
+    provider: {
+      "@type": "Organization",
+      name: "Technocrats Digimate Pvt Ltd",
+      url: "https://technocratsdigimate.com"
+    },
+    areaServed: ["Chandigarh", "Tricity", "India", "Dubai", "UAE"],
+    serviceType: [
+      "Social media marketing",
+      "Instagram marketing",
+      "LinkedIn marketing",
+      "Content strategy",
+      "Community building",
+      "Lead generation support"
+    ],
+    url: canonicalUrl
   },
-  areaServed: ["Chandigarh", "Tricity", "India", "Dubai", "UAE"],
-  serviceType: [
-    "Social media marketing",
-    "Instagram marketing",
-    "LinkedIn marketing",
-    "Content strategy",
-    "Community building",
-    "Lead generation support"
-  ],
-  url: canonicalUrl
-};
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://technocratsdigimate.com/"
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Services",
+        item: "https://technocratsdigimate.com/services"
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: "Social Media Marketing",
+        item: canonicalUrl
+      }
+    ]
+  }
+];
 
 export default function SocialMediaMarketingPage() {
   return (

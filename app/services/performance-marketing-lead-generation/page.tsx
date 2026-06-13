@@ -24,6 +24,11 @@ export const metadata: Metadata = {
     url: canonicalUrl,
     siteName: "Technocrats Digimate",
     type: "website"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: pageTitle,
+    description: pageDescription
   }
 };
 
@@ -71,26 +76,52 @@ const leakageSignals = [
   "Reports show spend and CPL, but not lead quality or revenue movement."
 ];
 
-const serviceJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Service",
-  name: "Performance Marketing and Lead Generation",
-  provider: {
-    "@type": "Organization",
-    name: "Technocrats Digimate Pvt Ltd",
-    url: "https://technocratsdigimate.com"
+const serviceJsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Performance Marketing and Lead Generation",
+    provider: {
+      "@type": "Organization",
+      name: "Technocrats Digimate Pvt Ltd",
+      url: "https://technocratsdigimate.com"
+    },
+    areaServed: ["Chandigarh", "Tricity", "India", "Dubai", "UAE"],
+    serviceType: [
+      "Performance marketing",
+      "Lead generation",
+      "Meta Ads management",
+      "Google Ads management",
+      "Conversion tracking",
+      "Funnel audit"
+    ],
+    url: canonicalUrl
   },
-  areaServed: ["Chandigarh", "Tricity", "India", "Dubai", "UAE"],
-  serviceType: [
-    "Performance marketing",
-    "Lead generation",
-    "Meta Ads management",
-    "Google Ads management",
-    "Conversion tracking",
-    "Funnel audit"
-  ],
-  url: canonicalUrl
-};
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://technocratsdigimate.com/"
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Services",
+        item: "https://technocratsdigimate.com/services"
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: "Performance Marketing & Lead Generation",
+        item: canonicalUrl
+      }
+    ]
+  }
+];
 
 export default function PerformanceMarketingLeadGenerationPage() {
   return (
