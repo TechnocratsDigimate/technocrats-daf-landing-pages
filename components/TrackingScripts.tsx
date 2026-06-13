@@ -5,8 +5,8 @@ import Script from "next/script";
 import { captureUtmParameters, hasTrackingConsent, onTrackingConsentChange, trackPageView } from "@/lib/tracking";
 
 export function TrackingScripts() {
-  const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
-  const ga4Id = process.env.NEXT_PUBLIC_GA4_ID;
+  const gtmId = process.env.NEXT_PUBLIC_GTM_ID || 'GTM-T55Z3JH6';
+  const ga4Id = process.env.NEXT_PUBLIC_GA4_ID || 'G-NXR7R8BXPN';
   const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
   const [trackingEnabled, setTrackingEnabled] = useState(false);
 
