@@ -12,6 +12,16 @@ export function TrackingScripts() {
   const [trackingEnabled, setTrackingEnabled] = useState(false);
 
   useEffect(() => {
+    // Inject GTM directly into <head> — works regardless of Next.js Script timing
+    if (!document.getElementById("gtm-script")) {
+      const s = document.createElement("script");
+      s.id = "gtm-script";
+      s.innerHTML = `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');`;
+      document.head.appendChild(s);
+    }
+  }, []);
+
+  useEffect(() => {
     captureUtmParameters();
     const timer = window.setTimeout(() => {
       setTrackingEnabled(hasTrackingConsent());
@@ -35,11 +45,6 @@ export function TrackingScripts() {
 
   return (
     <>
-      {/* GTM — loads immediately, no consent required */}
-      <Script id="gtm-base" strategy="afterInteractive">
-        {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');`}
-      </Script>
-
       {/* GA4 + Meta Pixel — only after consent */}
       {trackingEnabled ? (
         <>
