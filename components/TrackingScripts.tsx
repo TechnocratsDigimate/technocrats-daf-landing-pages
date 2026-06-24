@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import Script from "next/script";
 import { captureUtmParameters, hasTrackingConsent, onTrackingConsentChange, trackPageView } from "@/lib/tracking";
 
+const GTM_ID = "GTM-T55Z3JH6";
+
 export function TrackingScripts() {
-  const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
   const ga4Id = process.env.NEXT_PUBLIC_GA4_ID;
   const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
   const [trackingEnabled, setTrackingEnabled] = useState(false);
@@ -35,11 +36,9 @@ export function TrackingScripts() {
   return (
     <>
       {/* GTM — loads immediately, no consent required */}
-      {gtmId ? (
-        <Script id="gtm-base" strategy="afterInteractive">
-          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtmId}');`}
-        </Script>
-      ) : null}
+      <Script id="gtm-base" strategy="afterInteractive">
+        {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');`}
+      </Script>
 
       {/* GA4 + Meta Pixel — only after consent */}
       {trackingEnabled ? (
