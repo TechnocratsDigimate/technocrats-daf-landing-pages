@@ -324,8 +324,8 @@ export function FunnelPage({ funnel }: { funnel: FunnelConfig }) {
     : processSteps;
 
   useEffect(() => {
-    // TrackingScripts fires the global PageView — we must not duplicate it.
-    // Fire a niche-specific named event instead so funnels are identifiable in GA4 / Meta.
+    // ConsentAwareTracking fires the global PageView — we must not duplicate it.
+    // Fire a niche-specific named event instead so funnels are identifiable via GTM.
     trackEvent("funnel_page_view", { niche: funnel.niche, page: funnel.slug });
   }, [funnel.niche, funnel.slug]);
 

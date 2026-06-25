@@ -16,7 +16,6 @@ type TrackingEventName =
 
 type WindowWithTracking = Window & {
   fbq?: (...args: unknown[]) => void;
-  gtag?: (...args: unknown[]) => void;
   dataLayer?: Record<string, unknown>[];
 };
 
@@ -263,13 +262,14 @@ function pushEvent(eventName: TrackingEventName, funnelInput?: string | FunnelTy
   const trackedWindow = window as WindowWithTracking;
   const payload = buildPayload(funnelInput, properties);
 
+  // All events flow through GTM via dataLayer — GTM forwards to GA4, Meta Pixel, Google Ads
   trackedWindow.dataLayer = trackedWindow.dataLayer || [];
-  trackedWindow.dataLayer.push({ event: eventName, ...payload });
+  trackedWindow.dataLayer.push({
+    event: GA4_EVENT_NAMES[eventName],
+    ...payload
+  });
 
-  if (trackedWindow.gtag && process.env.NEXT_PUBLIC_GA4_ID) {
-    trackedWindow.gtag("event", GA4_EVENT_NAMES[eventName], cleanPayload(toGa4Params(payload)));
-  }
-
+  // Meta Pixel direct fallback — fires only if GTM is not configured to handle it
   if (trackedWindow.fbq && process.env.NEXT_PUBLIC_META_PIXEL_ID && META_CUSTOM_EVENTS.has(eventName)) {
     trackedWindow.fbq("trackCustom", eventName, payload);
   }
@@ -338,7 +338,7 @@ export function trackDuplicateLeadDetected(funnelInput?: string | FunnelType) {
 
 // ─── GTM conversion events ────────────────────────────────────────────────────
 // Pushes named conversion events directly to window.dataLayer.
-// GTM container is already loaded by TrackingScripts.tsx — no second loader needed.
+// GTM container is loaded in app/layout.tsx <head> — no second loader needed.
 // All events are consent-gated via hasTrackingConsent().
 
 type ConversionEventName =
