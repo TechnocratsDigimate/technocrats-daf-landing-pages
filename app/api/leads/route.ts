@@ -117,6 +117,32 @@ export async function POST(request: Request) {
 
   const payload = buildLeadPayload(body);
 
+  // HubSpot — fire and forget, never blocks lead submission
+  if (process.env.HUBSPOT_ACCESS_TOKEN) {
+    const nameParts = (payload.name || "").trim().split(/\s+/);
+    const hsProperties: Record<string, string> = {
+      firstname: nameParts[0] || "",
+      lastname: nameParts.slice(1).join(" ") || "",
+      phone: payload.phone || "",
+      hs_lead_status: "NEW",
+      lead_source_detail: payload.funnelType || "",
+    };
+    if (payload.email) hsProperties.email = payload.email;
+    if (payload.city) hsProperties.city = payload.city;
+    if (payload.monthlyBudget) hsProperties.monthly_budget__c = payload.monthlyBudget;
+    if (payload.utmSource) hsProperties.hs_analytics_source = payload.utmSource;
+
+    fetch("https://api.hubapi.com/crm/v3/objects/contacts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.HUBSPOT_ACCESS_TOKEN}`,
+      },
+      body: JSON.stringify({ properties: hsProperties }),
+      cache: "no-store",
+    }).catch((err) => console.error("[/api/leads] HubSpot contact creation failed.", err));
+  }
+
   if (!process.env.LEAD_WEBHOOK_URL) {
     console.error(
       "[/api/leads] LEAD_WEBHOOK_URL is not set. " +
