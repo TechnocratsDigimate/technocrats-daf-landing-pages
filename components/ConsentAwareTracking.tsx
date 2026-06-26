@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Script from "next/script";
 import { captureUtmParameters, hasTrackingConsent, onTrackingConsentChange, trackPageView } from "@/lib/tracking";
 
 const GTM_ID = "GTM-T55Z3JH6";
@@ -28,15 +27,13 @@ export function ConsentAwareTracking() {
 
   useEffect(() => {
     if (!consentGiven) return;
+    // Signal consent to GTM — Meta Pixel base tag in GTM fires on this event
+    const w = window as Window & { dataLayer?: Record<string, unknown>[] };
+    w.dataLayer = w.dataLayer || [];
+    w.dataLayer.push({ event: "consent_granted", pixel_id: META_PIXEL_ID });
     const timer = window.setTimeout(() => { trackPageView(); }, 600);
     return () => window.clearTimeout(timer);
   }, [consentGiven]);
 
-  if (!consentGiven) return null;
-
-  return (
-    <Script id="meta-pixel" strategy="afterInteractive">
-      {`!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${META_PIXEL_ID}');fbq('track','PageView');`}
-    </Script>
-  );
+  return null;
 }
