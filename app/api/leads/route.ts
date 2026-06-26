@@ -117,31 +117,24 @@ export async function POST(request: Request) {
 
   const payload = buildLeadPayload(body);
 
-  // HubSpot — fire and forget, never blocks lead submission
-  if (process.env.HUBSPOT_ACCESS_TOKEN) {
-    const nameParts = (payload.name || "").trim().split(/\s+/);
-    const hsProperties: Record<string, string> = {
-      firstname: nameParts[0] || "",
-      lastname: nameParts.slice(1).join(" ") || "",
-      phone: payload.phone || "",
-      hs_lead_status: "NEW",
-      lead_source_detail: payload.funnelType || "",
-    };
-    if (payload.email) hsProperties.email = payload.email;
-    if (payload.city) hsProperties.city = payload.city;
-    if (payload.monthlyBudget) hsProperties.monthly_budget__c = payload.monthlyBudget;
-    if (payload.utmSource) hsProperties.hs_analytics_source = payload.utmSource;
+  // HubSpot Forms API — fire and forget, never blocks lead submission
+  const HS_PORTAL_ID = "246581458";
+  const HS_FORM_GUID = "92e3fb71-11c2-400b-bef9-0f5b26e4637c";
+  const nameParts = (payload.name || "").trim().split(/\s+/);
+  const hsFields: { name: string; value: string }[] = [
+    { name: "firstname", value: nameParts[0] || "" },
+    { name: "lastname", value: nameParts.slice(1).join(" ") || "" },
+    { name: "phone", value: payload.phone || "" },
+  ];
+  if (payload.email) hsFields.push({ name: "email", value: payload.email });
+  if (payload.city) hsFields.push({ name: "city", value: payload.city });
 
-    fetch("https://api.hubapi.com/crm/v3/objects/contacts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.HUBSPOT_ACCESS_TOKEN}`,
-      },
-      body: JSON.stringify({ properties: hsProperties }),
-      cache: "no-store",
-    }).catch((err) => console.error("[/api/leads] HubSpot contact creation failed.", err));
-  }
+  fetch(`https://api.hsforms.com/submissions/v3/integration/submit/${HS_PORTAL_ID}/${HS_FORM_GUID}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ fields: hsFields }),
+    cache: "no-store",
+  }).catch((err) => console.error("[/api/leads] HubSpot form submission failed.", err));
 
   if (!process.env.LEAD_WEBHOOK_URL) {
     console.error(
