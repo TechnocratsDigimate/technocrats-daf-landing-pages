@@ -18,6 +18,18 @@ export function ConsentAwareTracking() {
     document.head.appendChild(s);
   }, []);
 
+  // HubSpot — inject immediately on mount, no consent required
+  useEffect(() => {
+    if (document.getElementById("hs-script-loader")) return;
+    const s = document.createElement("script");
+    s.id = "hs-script-loader";
+    s.type = "text/javascript";
+    s.async = true;
+    s.defer = true;
+    s.src = "//js-na2.hs-scripts.com/246581458.js";
+    document.body.appendChild(s);
+  }, []);
+
   useEffect(() => {
     captureUtmParameters();
     setConsentGiven(hasTrackingConsent());
