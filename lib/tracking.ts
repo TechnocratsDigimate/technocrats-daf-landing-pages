@@ -269,9 +269,11 @@ function pushEvent(eventName: TrackingEventName, funnelInput?: string | FunnelTy
     ...payload
   });
 
-  // Meta Pixel direct fallback — fires only if GTM is not configured to handle it
   if (trackedWindow.fbq && process.env.NEXT_PUBLIC_META_PIXEL_ID && META_CUSTOM_EVENTS.has(eventName)) {
     trackedWindow.fbq("trackCustom", eventName, payload);
+    if (eventName === "LeadSubmitted") {
+      trackedWindow.fbq("track", "Lead", { value: 0, currency: "INR" });
+    }
   }
 
   return true;
