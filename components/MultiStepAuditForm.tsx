@@ -362,7 +362,11 @@ export function MultiStepAuditForm({ funnel }: { funnel: FunnelConfig }) {
         })
       });
       const submittedName = typeof answers.name === "string" ? answers.name.trim() : "";
-      const redirectUrl = `/thank-you?niche=${encodeURIComponent(funnel.niche)}${submittedName ? `&name=${encodeURIComponent(submittedName)}` : ""}`;
+      const nameParam = submittedName ? `?name=${encodeURIComponent(submittedName)}` : "";
+      const nicheSlug = funnel.niche.toLowerCase().includes("real") ? "real-estate" : funnel.niche.toLowerCase().includes("study") ? "study-abroad" : null;
+      const redirectUrl = nicheSlug
+        ? `/thank-you/${nicheSlug}${nameParam}`
+        : `/thank-you?niche=${encodeURIComponent(funnel.niche)}${submittedName ? `&name=${encodeURIComponent(submittedName)}` : ""}`;
       router.push(redirectUrl);
     } catch (submissionError) {
       // Network/API errors must never block the user — fall through to normal error display
