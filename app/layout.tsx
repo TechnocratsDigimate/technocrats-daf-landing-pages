@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { GoogleTagManager } from "@next/third-parties/google";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import { ConsentAwareTracking } from "@/components/ConsentAwareTracking";
 import "./globals.css";
@@ -21,7 +20,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <GoogleTagManager gtmId="GTM-T55Z3JH6" />
       <body>
         <ConsentAwareTracking />
         {children}
