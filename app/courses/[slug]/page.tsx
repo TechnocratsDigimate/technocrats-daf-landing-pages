@@ -2,10 +2,12 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { BrandHeader } from "@/components/BrandHeader";
 import { Footer } from "@/components/Footer";
-import { getCourseBySlug } from "@/lib/courses";
+import { getCourseBySlug, COURSES } from "@/lib/courses";
 import { RazorpayCheckout } from "./RazorpayCheckout";
 
-export const dynamic = "force-dynamic";
+export function generateStaticParams() {
+  return COURSES.map((c) => ({ slug: c.slug }));
+}
 
 export function generateMetadata({ params }: { params: { slug: string } }) {
   const course = getCourseBySlug(params.slug);
