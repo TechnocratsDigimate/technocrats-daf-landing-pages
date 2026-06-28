@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getStoredUtmParameters, trackEvent } from "@/lib/tracking";
 
 function normalizePhone(raw: string): string {
@@ -96,6 +97,7 @@ interface AuditShortFormProps {
 }
 
 export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [industry, setIndustry] = useState("");
@@ -178,7 +180,7 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
 
       trackEvent("audit_form_complete", { page: "audit", industry });
 
-      setSubmitted(true);
+      router.push(`/thank-you/audit?name=${encodeURIComponent(name.trim())}`);
     } catch {
       setSubmitError("Could not reach the server. Please try again or message us on WhatsApp.");
       setSubmitting(false);
