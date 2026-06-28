@@ -34,8 +34,9 @@ export async function POST(request: NextRequest) {
     const data = await res.json() as { return: boolean; message?: string[] };
 
     if (!data.return) {
+      const errMsg = Array.isArray(data.message) ? data.message.join(" ") : String(data.message ?? "Unknown error");
       console.error("[OTP Send] Fast2SMS error:", data);
-      return NextResponse.json({ ok: false, message: "Failed to send OTP. Please try again." }, { status: 500 });
+      return NextResponse.json({ ok: false, message: `SMS error: ${errMsg}` }, { status: 500 });
     }
 
     return NextResponse.json({ ok: true });
