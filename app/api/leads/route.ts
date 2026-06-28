@@ -1,4 +1,9 @@
 import { NextResponse } from "next/server";
+import { createHash } from "crypto";
+
+function sha256(value: string): string {
+  return createHash("sha256").update(value.trim().toLowerCase()).digest("hex");
+}
 
 // ─── GET: health / method-check ───────────────────────────────────────────────
 // Browsers and uptime monitors hit this URL via GET.
@@ -135,6 +140,38 @@ export async function POST(request: Request) {
     body: JSON.stringify({ fields: hsFields }),
     cache: "no-store",
   }).catch((err) => console.error("[/api/leads] HubSpot form submission failed.", err));
+
+  // Meta Conversions API — server-side Lead event (fire and forget)
+  const CAPI_TOKEN = process.env.META_CAPI_ACCESS_TOKEN;
+  const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "357870675925394";
+  if (CAPI_TOKEN) {
+    const userData: Record<string, string> = {};
+    if (payload.email) userData.em = sha256(payload.email);
+    if (payload.phone) userData.ph = sha256(payload.phone.replace(/\D/g, ""));
+
+    const capiPayload = {
+      data: [
+        {
+          event_name: "Lead",
+          event_time: Math.floor(Date.now() / 1000),
+          action_source: "website",
+          event_source_url: `https://technocratsdigimate.com${payload.pagePath || "/"}`,
+          user_data: userData,
+          custom_data: {
+            niche: payload.niche,
+            funnel_type: payload.funnelType,
+          },
+        },
+      ],
+    };
+
+    fetch(`https://graph.facebook.com/v19.0/${PIXEL_ID}/events?access_token=${CAPI_TOKEN}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(capiPayload),
+      cache: "no-store",
+    }).catch((err) => console.error("[/api/leads] Meta CAPI event failed.", err));
+  }
 
   if (!process.env.LEAD_WEBHOOK_URL) {
     console.error(
