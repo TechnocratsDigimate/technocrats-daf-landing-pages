@@ -1,10 +1,20 @@
 import type { MetadataRoute } from "next";
+import { getAllPosts } from "@/lib/blog/posts";
 
 const siteUrl = "https://technocratsdigimate.com";
 const lastModified = new Date("2026-06-07T00:00:00.000Z");
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const blogPosts = getAllPosts().map((post) => ({
+    url: `${siteUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.publishedAt),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
   return [
+    { url: `${siteUrl}/blog`, lastModified, changeFrequency: "daily" as const, priority: 0.9 },
+    ...blogPosts,
     {
       url: `${siteUrl}/`,
       lastModified,
