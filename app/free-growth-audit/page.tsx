@@ -164,8 +164,29 @@ export default function FreeGrowthAuditPage() {
     <>
       <BrandHeader />
 
+      {/* ── Audit Form ───────────────────────────────────────────────────── */}
+      <section id="audit-form" className="bg-ink pt-28 pb-16 md:pb-20">
+        <div className="mx-auto max-w-[1320px] px-5 md:px-8 lg:px-10">
+          <div className="mx-auto max-w-2xl">
+            <div className="mb-10 text-center">
+              <Badge label="Free — No Obligation" variant="gold" />
+              <h2 className="mt-4 text-3xl font-semibold text-white md:text-4xl">
+                Request Your Free Growth Audit
+              </h2>
+              <p className="mt-3 leading-7 text-slate-400">
+                Fill in the form below. Gautam reviews every application personally and confirms within 24 business hours.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm md:p-8">
+              <AuditForm />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-ink pt-28 pb-16 md:pb-20">
+      <section className="relative overflow-hidden bg-ink pt-16 pb-16 md:pb-20">
         <div className="agency-grid absolute inset-0 opacity-25 pointer-events-none" />
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_50%_at_30%_40%,rgba(214,168,79,0.07)_0%,transparent_65%)]" />
 
@@ -258,27 +279,6 @@ export default function FreeGrowthAuditPage() {
               </div>
             </div>
 
-          </div>
-        </div>
-      </section>
-
-      {/* ── Audit Form ───────────────────────────────────────────────────── */}
-      <section id="audit-form" className="bg-ink py-16 md:py-24">
-        <div className="mx-auto max-w-[1320px] px-5 md:px-8 lg:px-10">
-          <div className="mx-auto max-w-2xl">
-            <div className="mb-10 text-center">
-              <Badge label="Free — No Obligation" variant="gold" />
-              <h2 className="mt-4 text-3xl font-semibold text-white md:text-4xl">
-                Request Your Free Growth Audit
-              </h2>
-              <p className="mt-3 leading-7 text-slate-400">
-                Fill in the form below. Gautam reviews every application personally and confirms within 24 business hours.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm md:p-8">
-              <AuditForm />
-            </div>
           </div>
         </div>
       </section>
