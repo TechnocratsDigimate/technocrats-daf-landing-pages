@@ -193,7 +193,7 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
             Select your industry
           </option>
           {INDUSTRIES.map((i) => (
-            <option key={i.value} value={i.value}>
+            <option key={i.value} value={i.value} style={{ background: "#1e293b", color: "#fff" }}>
               {i.label}
             </option>
           ))}
