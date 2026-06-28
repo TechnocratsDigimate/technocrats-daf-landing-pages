@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { getStoredUtmParameters, trackEvent } from "@/lib/tracking";
 
 function normalizePhone(raw: string): string {
@@ -32,6 +32,64 @@ const INDUSTRIES = [
 const inputClass =
   "w-full rounded-lg border border-white/10 bg-white/[0.05] px-4 py-3 text-white placeholder-slate-500 outline-none transition focus:border-gold/50 focus:ring-1 focus:ring-gold/30";
 const errorClass = "mt-1 text-xs text-red-400";
+
+function CustomSelect({
+  value,
+  onChange,
+  error,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  error?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const selected = INDUSTRIES.find((i) => i.value === value);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className={`w-full rounded-lg border px-4 py-3 text-left transition outline-none ${
+          error ? "border-red-500/50" : "border-white/10"
+        } bg-navy text-white focus:border-gold/50 focus:ring-1 focus:ring-gold/30`}
+      >
+        <span className={selected ? "text-white" : "text-slate-500"}>
+          {selected ? selected.label : "Select your industry"}
+        </span>
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+          {open ? "▲" : "▼"}
+        </span>
+      </button>
+      {open && (
+        <ul className="absolute z-50 mt-1 w-full rounded-lg border border-white/10 bg-navy py-1 shadow-xl">
+          {INDUSTRIES.map((i) => (
+            <li
+              key={i.value}
+              onClick={() => { onChange(i.value); setOpen(false); }}
+              className={`cursor-pointer px-4 py-2.5 text-sm transition hover:bg-gold/10 hover:text-gold ${
+                value === i.value ? "text-gold" : "text-white"
+              }`}
+            >
+              {i.label}
+            </li>
+          ))}
+        </ul>
+      )}
+      {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
+    </div>
+  );
+}
 
 interface AuditShortFormProps {
   formId?: string;
@@ -183,24 +241,11 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
       </div>
 
       {/* Industry */}
-      <div>
-        <select
-          value={industry}
-          onChange={(e) => setIndustry(e.target.value)}
-          style={{ background: "#0d1828", color: "#fff" }}
-          className={`${inputClass} cursor-pointer`}
-        >
-          <option value="" disabled style={{ background: "#0d1828", color: "#94a3b8" }}>
-            Select your industry
-          </option>
-          {INDUSTRIES.map((i) => (
-            <option key={i.value} value={i.value} style={{ background: "#0d1828", color: "#fff" }}>
-              {i.label}
-            </option>
-          ))}
-        </select>
-        {errors.industry && <p className={errorClass}>{errors.industry}</p>}
-      </div>
+      <CustomSelect
+        value={industry}
+        onChange={setIndustry}
+        error={errors.industry}
+      />
 
       {submitError && (
         <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
