@@ -34,7 +34,15 @@ const inputClass =
   "w-full rounded-lg border border-white/10 bg-white/[0.05] px-4 py-3 text-white placeholder-slate-500 outline-none transition focus:border-gold/50 focus:ring-1 focus:ring-gold/30";
 const errorClass = "mt-1 text-xs text-red-400";
 
-function CustomSelect({ value, onChange, error }: { value: string; onChange: (v: string) => void; error?: string }) {
+function CustomSelect({
+  value,
+  onChange,
+  error,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  error?: string;
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -60,7 +68,9 @@ function CustomSelect({ value, onChange, error }: { value: string; onChange: (v:
         <span className={selected ? "text-white" : "text-slate-500"}>
           {selected ? selected.label : "Select your industry"}
         </span>
-        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">{open ? "▲" : "▼"}</span>
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+          {open ? "▲" : "▼"}
+        </span>
       </button>
       {open && (
         <ul className="absolute z-50 mt-1 w-full rounded-lg border border-white/10 bg-navy py-1 shadow-xl">
@@ -68,7 +78,9 @@ function CustomSelect({ value, onChange, error }: { value: string; onChange: (v:
             <li
               key={i.value}
               onClick={() => { onChange(i.value); setOpen(false); }}
-              className={`cursor-pointer px-4 py-2.5 text-sm transition hover:bg-gold/10 hover:text-gold ${value === i.value ? "text-gold" : "text-white"}`}
+              className={`cursor-pointer px-4 py-2.5 text-sm transition hover:bg-gold/10 hover:text-gold ${
+                value === i.value ? "text-gold" : "text-white"
+              }`}
             >
               {i.label}
             </li>
@@ -80,45 +92,26 @@ function CustomSelect({ value, onChange, error }: { value: string; onChange: (v:
   );
 }
 
-type Step = "form" | "otp" | "submitting";
-
 interface AuditShortFormProps {
   formId?: string;
 }
 
 export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
   const router = useRouter();
-  const [step, setStep] = useState<Step>("form");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [industry, setIndustry] = useState("");
-  const [otp, setOtp] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [sending, setSending] = useState(false);
-  const [otpError, setOtpError] = useState("");
-  const [countdown, setCountdown] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const startFired = useRef(false);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   function fireFormStart() {
     if (startFired.current) return;
     startFired.current = true;
-    const w = window as Window & { fbq?: (...a: unknown[]) => void };
+    const w = window as Window & { fbq?: (...a: unknown[]) => void; dataLayer?: Record<string, unknown>[] };
     if (w.fbq) w.fbq("trackCustom", "audit_form_start");
   }
-
-  function startCountdown(seconds = 30) {
-    setCountdown(seconds);
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setCountdown((c) => {
-        if (c <= 1) { clearInterval(timerRef.current!); return 0; }
-        return c - 1;
-      });
-    }, 1000);
-  }
-
-  useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current); }, []);
 
   function validate(): boolean {
     const errs: Record<string, string> = {};
@@ -130,60 +123,15 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
     return Object.keys(errs).length === 0;
   }
 
-  async function handleSendOtp(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!validate()) return;
-    setSending(true);
-    setOtpError("");
 
-    try {
-      const res = await fetch("/api/otp/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: normalizePhone(phone) }),
-      });
-      const data = await res.json() as { ok: boolean; message?: string };
-      if (!data.ok) {
-        setOtpError(data.message ?? "Could not send OTP. Please try again.");
-      } else {
-        setStep("otp");
-        startCountdown(30);
-      }
-    } catch {
-      setOtpError("Could not send OTP. Please try again.");
-    } finally {
-      setSending(false);
-    }
-  }
-
-  async function handleVerifyOtp(e: FormEvent) {
-    e.preventDefault();
-    if (!otp || otp.length < 6) { setOtpError("Please enter the 6-digit OTP."); return; }
-    setStep("submitting");
-    setOtpError("");
-
-    // Verify OTP
-    try {
-      const vRes = await fetch("/api/otp/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: normalizePhone(phone), otp }),
-      });
-      const vData = await vRes.json() as { ok: boolean; message?: string };
-      if (!vData.ok) {
-        setStep("otp");
-        setOtpError(vData.message ?? "Incorrect OTP. Please try again.");
-        return;
-      }
-    } catch {
-      setStep("otp");
-      setOtpError("Verification failed. Please try again.");
-      return;
-    }
+    setSubmitting(true);
+    setSubmitError("");
 
     const w = window as Window & { fbq?: (...a: unknown[]) => void; dataLayer?: Record<string, unknown>[] };
 
-    // Submit lead
     try {
       const res = await fetch("/api/leads", {
         method: "POST",
@@ -194,7 +142,6 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
           pagePath: "/audit",
           formType: "ad_short_form",
           consentStatus: "contact_consent_accepted",
-          phoneVerified: true,
           answers: {
             name: name.trim(),
             whatsapp: normalizePhone(phone),
@@ -204,110 +151,41 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
           utm: getStoredUtmParameters(),
         }),
       });
-      const data = await res.json() as { ok: boolean; message?: string };
-      if (!data.ok) throw new Error(data.message);
+
+      const data = (await res.json()) as { ok: boolean; message?: string };
+
+      if (!data.ok) {
+        setSubmitError(data.message ?? "Something went wrong. Please try again or message us on WhatsApp.");
+        setSubmitting(false);
+        return;
+      }
 
       if (w.fbq) {
-        w.fbq("track", "Lead", { content_name: "Free Growth Audit - Ad Traffic", content_category: industry });
+        w.fbq("track", "Lead", {
+          content_name: "Free Growth Audit - Ad Traffic",
+          content_category: industry,
+        });
         w.fbq("trackCustom", "audit_form_complete");
       }
+
       w.dataLayer = w.dataLayer || [];
-      w.dataLayer.push({ event: "generate_lead", form_name: "audit_short_form", industry });
+      w.dataLayer.push({
+        event: "generate_lead",
+        form_name: "audit_short_form",
+        industry,
+      });
+
       trackEvent("audit_form_complete", { page: "audit", industry });
 
       router.push(`/thank-you/audit?name=${encodeURIComponent(name.trim())}`);
     } catch {
-      setStep("otp");
-      setOtpError("Submission failed. Please try again or message us on WhatsApp.");
+      setSubmitError("Could not reach the server. Please try again or message us on WhatsApp.");
+      setSubmitting(false);
     }
   }
 
-  async function handleResendOtp() {
-    if (countdown > 0) return;
-    setSending(true);
-    setOtpError("");
-    try {
-      const res = await fetch("/api/otp/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: normalizePhone(phone) }),
-      });
-      const data = await res.json() as { ok: boolean; message?: string };
-      if (!data.ok) setOtpError(data.message ?? "Could not resend OTP.");
-      else startCountdown(30);
-    } catch {
-      setOtpError("Could not resend OTP. Please try again.");
-    } finally {
-      setSending(false);
-    }
-  }
-
-  // ── OTP Step ──────────────────────────────────────────────────────────────
-  if (step === "otp" || step === "submitting") {
-    return (
-      <form id={formId} onSubmit={handleVerifyOtp} noValidate className="flex flex-col gap-4">
-        <div className="rounded-lg border border-gold/20 bg-gold/5 px-4 py-3">
-          <p className="text-sm text-slate-300">
-            OTP sent to <span className="font-semibold text-white">+91 {normalizePhone(phone)}</span>
-          </p>
-          <button
-            type="button"
-            onClick={() => { setStep("form"); setOtp(""); setOtpError(""); }}
-            className="mt-0.5 text-xs text-gold underline underline-offset-2"
-          >
-            Change number
-          </button>
-        </div>
-
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-slate-300">Enter 6-digit OTP</label>
-          <input
-            type="number"
-            inputMode="numeric"
-            placeholder="_ _ _ _ _ _"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value.slice(0, 6))}
-            className={`${inputClass} text-center text-xl tracking-[0.5em]`}
-            autoFocus
-          />
-        </div>
-
-        {otpError && (
-          <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-            {otpError}
-          </p>
-        )}
-
-        <button
-          type="submit"
-          disabled={step === "submitting"}
-          className="w-full rounded-lg bg-gold px-5 py-4 text-center font-bold text-ink transition hover:bg-gold-soft disabled:opacity-60"
-        >
-          {step === "submitting" ? "Verifying…" : "Verify & Claim Audit →"}
-        </button>
-
-        <p className="text-center text-xs text-slate-500">
-          Didn&apos;t receive it?{" "}
-          {countdown > 0 ? (
-            <span className="text-slate-400">Resend in {countdown}s</span>
-          ) : (
-            <button
-              type="button"
-              onClick={handleResendOtp}
-              disabled={sending}
-              className="text-gold underline underline-offset-2 disabled:opacity-50"
-            >
-              {sending ? "Sending…" : "Resend OTP"}
-            </button>
-          )}
-        </p>
-      </form>
-    );
-  }
-
-  // ── Form Step ─────────────────────────────────────────────────────────────
   return (
-    <form id={formId} onSubmit={handleSendOtp} noValidate className="flex flex-col gap-4">
+    <form id={formId} onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
       <p className="text-sm font-semibold uppercase tracking-widest text-gold">
         Where should we send your audit findings?
       </p>
@@ -339,22 +217,22 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
 
       <CustomSelect value={industry} onChange={setIndustry} error={errors.industry} />
 
-      {otpError && (
+      {submitError && (
         <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-          {otpError}
+          {submitError}
         </p>
       )}
 
       <button
         type="submit"
-        disabled={sending}
+        disabled={submitting}
         className="w-full rounded-lg bg-gold px-5 py-4 text-center font-bold text-ink transition hover:bg-gold-soft disabled:opacity-60"
       >
-        {sending ? "Sending OTP…" : "Send OTP →"}
+        {submitting ? "Submitting…" : "Claim My Free Audit →"}
       </button>
 
       <p className="text-center text-xs text-slate-500">
-        We&apos;ll send a 6-digit OTP to verify your number · No pitch · Founder-reviewed
+        Takes 30 seconds · No pitch · Founder-reviewed by Gautam Punj
       </p>
 
       <p className="text-center text-xs text-slate-500">
