@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
     if (data.Status !== "Success") {
       console.error("[OTP Send] 2factor error:", data);
-      return NextResponse.json({ ok: false, message: "Failed to send OTP. Please try again." }, { status: 500 });
+      return NextResponse.json({ ok: false, message: `2factor error: ${data.Details ?? data.Status}` }, { status: 500 });
     }
 
     // Details contains the session_id needed for verification
