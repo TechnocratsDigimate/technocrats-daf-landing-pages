@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { getFirebaseAuth } from "@/lib/firebase";
 import { getStoredUtmParameters, trackEvent } from "@/lib/tracking";
 
 function normalizePhone(raw: string): string {
@@ -153,6 +153,7 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
     setOtpError("");
 
     try {
+      const auth = await getFirebaseAuth();
       if (!recaptchaRef.current) {
         recaptchaRef.current = new RecaptchaVerifier(auth, "recaptcha-container", {
           size: "invisible",
@@ -246,6 +247,7 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
     setSendingOtp(true);
     setOtpError("");
     try {
+      const auth = await getFirebaseAuth();
       if (!recaptchaRef.current) {
         recaptchaRef.current = new RecaptchaVerifier(auth, "recaptcha-container", { size: "invisible" });
       }
