@@ -1,9 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { setOtp, getOtp } from "@/lib/otpStore";
-
-function generateOtp(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
 
 export async function POST(request: NextRequest) {
   const body = await request.json() as { phone?: string };
@@ -13,33 +8,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, message: "Invalid phone number." }, { status: 400 });
   }
 
-  const existing = getOtp(phone);
-  if (existing && Date.now() - existing.sentAt < 30_000) {
-    return NextResponse.json({ ok: false, message: "Please wait 30 seconds before requesting another OTP." }, { status: 429 });
-  }
-
-  const otp = generateOtp();
-  setOtp(phone, otp);
-
-  const apiKey = process.env.FAST2SMS_API_KEY;
+  const apiKey = process.env.TWOFACTOR_API_KEY;
   if (!apiKey) {
     return NextResponse.json({ ok: false, message: "SMS service not configured." }, { status: 500 });
   }
 
   try {
     const res = await fetch(
-      `https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}&variables_values=${otp}&route=otp&numbers=${phone}`,
+      `https://2factor.in/API/V1/${apiKey}/SMS/${phone}/AUTOGEN/OTP1`,
       { cache: "no-store" }
     );
-    const data = await res.json() as { return: boolean; message?: string[] };
+    const data = await res.json() as { Status: string; Details: string };
 
-    if (!data.return) {
-      const errMsg = Array.isArray(data.message) ? data.message.join(" ") : String(data.message ?? "Unknown error");
-      console.error("[OTP Send] Fast2SMS error:", data);
-      return NextResponse.json({ ok: false, message: `SMS error: ${errMsg}` }, { status: 500 });
+    if (data.Status !== "Success") {
+      console.error("[OTP Send] 2factor error:", data);
+      return NextResponse.json({ ok: false, message: "Failed to send OTP. Please try again." }, { status: 500 });
     }
 
-    return NextResponse.json({ ok: true });
+    // Details contains the session_id needed for verification
+    return NextResponse.json({ ok: true, sessionId: data.Details });
   } catch (err) {
     console.error("[OTP Send] Fetch error:", err);
     return NextResponse.json({ ok: false, message: "Failed to send OTP. Please try again." }, { status: 500 });

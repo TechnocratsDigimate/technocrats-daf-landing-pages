@@ -1,36 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getOtp, incrementAttempts, deleteOtp } from "@/lib/otpStore";
 
 export async function POST(request: NextRequest) {
-  const body = await request.json() as { phone?: string; otp?: string };
-  const phone = (body.phone ?? "").replace(/\D/g, "").slice(-10);
+  const body = await request.json() as { sessionId?: string; otp?: string };
+  const sessionId = (body.sessionId ?? "").trim();
   const otp = (body.otp ?? "").trim();
 
-  if (!phone || !otp) {
-    return NextResponse.json({ ok: false, message: "Phone and OTP are required." }, { status: 400 });
+  if (!sessionId || !otp) {
+    return NextResponse.json({ ok: false, message: "Session and OTP are required." }, { status: 400 });
   }
 
-  const entry = getOtp(phone);
-
-  if (!entry) {
-    return NextResponse.json({ ok: false, message: "OTP expired or not found. Please request a new one." }, { status: 400 });
+  const apiKey = process.env.TWOFACTOR_API_KEY;
+  if (!apiKey) {
+    return NextResponse.json({ ok: false, message: "SMS service not configured." }, { status: 500 });
   }
 
-  if (Date.now() > entry.expiry) {
-    deleteOtp(phone);
-    return NextResponse.json({ ok: false, message: "OTP has expired. Please request a new one." }, { status: 400 });
-  }
+  try {
+    const res = await fetch(
+      `https://2factor.in/API/V1/${apiKey}/SMS/VERIFY/${sessionId}/${otp}`,
+      { cache: "no-store" }
+    );
+    const data = await res.json() as { Status: string; Details: string };
 
-  if (entry.attempts >= 5) {
-    deleteOtp(phone);
-    return NextResponse.json({ ok: false, message: "Too many incorrect attempts. Please request a new OTP." }, { status: 400 });
-  }
+    if (data.Status !== "Success") {
+      return NextResponse.json({ ok: false, message: "Incorrect OTP. Please try again." }, { status: 400 });
+    }
 
-  if (entry.otp !== otp) {
-    incrementAttempts(phone);
-    return NextResponse.json({ ok: false, message: "Incorrect OTP. Please try again." }, { status: 400 });
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error("[OTP Verify] Fetch error:", err);
+    return NextResponse.json({ ok: false, message: "Verification failed. Please try again." }, { status: 500 });
   }
-
-  deleteOtp(phone);
-  return NextResponse.json({ ok: true });
 }
