@@ -2,6 +2,8 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 import { getStoredUtmParameters, trackEvent } from "@/lib/tracking";
 
 function normalizePhone(raw: string): string {
@@ -92,27 +94,47 @@ function CustomSelect({
   );
 }
 
+type Step = "form" | "otp" | "submitting";
+
 interface AuditShortFormProps {
   formId?: string;
 }
 
 export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
   const router = useRouter();
+  const [step, setStep] = useState<Step>("form");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [industry, setIndustry] = useState("");
+  const [otp, setOtp] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
+  const [otpError, setOtpError] = useState("");
+  const [countdown, setCountdown] = useState(0);
+  const confirmationRef = useRef<ConfirmationResult | null>(null);
+  const recaptchaRef = useRef<RecaptchaVerifier | null>(null);
   const startFired = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   function fireFormStart() {
     if (startFired.current) return;
     startFired.current = true;
-    const w = window as Window & { fbq?: (...a: unknown[]) => void; dataLayer?: Record<string, unknown>[] };
+    const w = window as Window & { fbq?: (...a: unknown[]) => void };
     if (w.fbq) w.fbq("trackCustom", "audit_form_start");
   }
+
+  function startCountdown(seconds = 30) {
+    setCountdown(seconds);
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setCountdown((c) => {
+        if (c <= 1) { clearInterval(timerRef.current!); return 0; }
+        return c - 1;
+      });
+    }, 1000);
+  }
+
+  useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current); }, []);
 
   function validate(): boolean {
     const errs: Record<string, string> = {};
@@ -124,12 +146,59 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
     return Object.keys(errs).length === 0;
   }
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSendOtp(e: FormEvent) {
     e.preventDefault();
     if (!validate()) return;
+    setSendingOtp(true);
+    setOtpError("");
 
-    setSubmitting(true);
-    setSubmitError("");
+    try {
+      if (!recaptchaRef.current) {
+        recaptchaRef.current = new RecaptchaVerifier(auth, "recaptcha-container", {
+          size: "invisible",
+        });
+      }
+      const phoneNumber = `+91${normalizePhone(phone)}`;
+      const result = await signInWithPhoneNumber(auth, phoneNumber, recaptchaRef.current);
+      confirmationRef.current = result;
+      setStep("otp");
+      startCountdown(30);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "";
+      if (msg.includes("too-many-requests")) {
+        setOtpError("Too many attempts. Please try again after some time.");
+      } else if (msg.includes("invalid-phone-number")) {
+        setOtpError("Invalid phone number. Please check and try again.");
+      } else {
+        setOtpError("Could not send OTP. Please try again.");
+      }
+      recaptchaRef.current = null;
+    } finally {
+      setSendingOtp(false);
+    }
+  }
+
+  async function handleVerifyOtp(e: FormEvent) {
+    e.preventDefault();
+    if (!otp || otp.length < 6) {
+      setOtpError("Please enter the 6-digit OTP.");
+      return;
+    }
+    if (!confirmationRef.current) {
+      setOtpError("Session expired. Please go back and try again.");
+      return;
+    }
+
+    setStep("submitting");
+    setOtpError("");
+
+    try {
+      await confirmationRef.current.confirm(otp);
+    } catch {
+      setStep("otp");
+      setOtpError("Incorrect OTP. Please check and try again.");
+      return;
+    }
 
     const w = window as Window & { fbq?: (...a: unknown[]) => void; dataLayer?: Record<string, unknown>[] };
 
@@ -143,6 +212,7 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
           pagePath: "/audit",
           formType: "ad_short_form",
           consentStatus: "contact_consent_accepted",
+          phoneVerified: true,
           answers: {
             name: name.trim(),
             whatsapp: normalizePhone(phone),
@@ -154,63 +224,112 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
       });
 
       const data = (await res.json()) as { ok: boolean; message?: string };
+      if (!data.ok) throw new Error(data.message);
 
-      if (!data.ok) {
-        setSubmitError(data.message ?? "Something went wrong. Please try again or message us on WhatsApp.");
-        setSubmitting(false);
-        return;
-      }
-
-      // Fire pixel events after confirmed success
       if (w.fbq) {
-        w.fbq("track", "Lead", {
-          content_name: "Free Growth Audit - Ad Traffic",
-          content_category: industry,
-        });
+        w.fbq("track", "Lead", { content_name: "Free Growth Audit - Ad Traffic", content_category: industry });
         w.fbq("trackCustom", "audit_form_complete");
       }
-
-      // GA4 dataLayer push
       w.dataLayer = w.dataLayer || [];
-      w.dataLayer.push({
-        event: "generate_lead",
-        form_name: "audit_short_form",
-        industry,
-      });
-
+      w.dataLayer.push({ event: "generate_lead", form_name: "audit_short_form", industry });
       trackEvent("audit_form_complete", { page: "audit", industry });
 
       router.push(`/thank-you/audit?name=${encodeURIComponent(name.trim())}`);
     } catch {
-      setSubmitError("Could not reach the server. Please try again or message us on WhatsApp.");
-      setSubmitting(false);
+      setStep("otp");
+      setOtpError("Submission failed. Please try again or message us on WhatsApp.");
     }
   }
 
-  if (submitted) {
+  async function handleResendOtp() {
+    if (countdown > 0) return;
+    setSendingOtp(true);
+    setOtpError("");
+    try {
+      if (!recaptchaRef.current) {
+        recaptchaRef.current = new RecaptchaVerifier(auth, "recaptcha-container", { size: "invisible" });
+      }
+      const result = await signInWithPhoneNumber(auth, `+91${normalizePhone(phone)}`, recaptchaRef.current);
+      confirmationRef.current = result;
+      startCountdown(30);
+    } catch {
+      setOtpError("Could not resend OTP. Please try again.");
+      recaptchaRef.current = null;
+    } finally {
+      setSendingOtp(false);
+    }
+  }
+
+  // ── OTP Step ──────────────────────────────────────────────────────────────
+  if (step === "otp" || step === "submitting") {
     return (
-      <div className="rounded-2xl border border-gold/30 bg-gold/5 p-8 text-center">
-        <div className="mb-3 text-3xl">✓</div>
-        <h3 className="mb-2 text-xl font-bold text-white">
-          You&apos;re in. We&apos;ll reach out on WhatsApp within 24 hours.
-        </h3>
-        <p className="mb-6 text-slate-300">
-          Gautam will personally review your situation before the call. Check your WhatsApp — we&apos;ll send a confirmation shortly.
-        </p>
-        <a
-          href="https://wa.me/919467744000?text=Hi%2C%20I%20just%20submitted%20the%20audit%20form."
-          rel="noreferrer"
-          target="_blank"
-          className="inline-block rounded-lg bg-[#25D366] px-6 py-3 font-semibold text-white transition hover:bg-[#1ebe5d]"
+      <form id={formId} onSubmit={handleVerifyOtp} noValidate className="flex flex-col gap-4">
+        <div className="rounded-lg border border-gold/20 bg-gold/5 px-4 py-3">
+          <p className="text-sm text-slate-300">
+            OTP sent to <span className="font-semibold text-white">+91 {normalizePhone(phone)}</span>
+          </p>
+          <button
+            type="button"
+            onClick={() => { setStep("form"); setOtp(""); setOtpError(""); }}
+            className="mt-0.5 text-xs text-gold underline underline-offset-2"
+          >
+            Change number
+          </button>
+        </div>
+
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-slate-300">
+            Enter 6-digit OTP
+          </label>
+          <input
+            type="number"
+            inputMode="numeric"
+            placeholder="_ _ _ _ _ _"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value.slice(0, 6))}
+            className={`${inputClass} text-center text-xl tracking-[0.5em]`}
+            autoFocus
+          />
+        </div>
+
+        {otpError && (
+          <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+            {otpError}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={step === "submitting"}
+          className="w-full rounded-lg bg-gold px-5 py-4 text-center font-bold text-ink transition hover:bg-gold-soft disabled:opacity-60"
         >
-          Open WhatsApp Now →
-        </a>
-      </div>
+          {step === "submitting" ? "Verifying…" : "Verify & Claim Audit →"}
+        </button>
+
+        <p className="text-center text-xs text-slate-500">
+          Didn&apos;t receive it?{" "}
+          {countdown > 0 ? (
+            <span className="text-slate-400">Resend in {countdown}s</span>
+          ) : (
+            <button
+              type="button"
+              onClick={handleResendOtp}
+              disabled={sendingOtp}
+              className="text-gold underline underline-offset-2 disabled:opacity-50"
+            >
+              {sendingOtp ? "Sending…" : "Resend OTP"}
+            </button>
+          )}
+        </p>
+
+        <div id="recaptcha-container" />
+      </form>
     );
   }
 
+  // ── Form Step ─────────────────────────────────────────────────────────────
   return (
-    <form id={formId} onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+    <form id={formId} onSubmit={handleSendOtp} noValidate className="flex flex-col gap-4">
       <p className="text-sm font-semibold uppercase tracking-widest text-gold">
         Where should we send your audit findings?
       </p>
@@ -243,28 +362,24 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
       </div>
 
       {/* Industry */}
-      <CustomSelect
-        value={industry}
-        onChange={setIndustry}
-        error={errors.industry}
-      />
+      <CustomSelect value={industry} onChange={setIndustry} error={errors.industry} />
 
-      {submitError && (
+      {otpError && (
         <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-          {submitError}
+          {otpError}
         </p>
       )}
 
       <button
         type="submit"
-        disabled={submitting}
+        disabled={sendingOtp}
         className="w-full rounded-lg bg-gold px-5 py-4 text-center font-bold text-ink transition hover:bg-gold-soft disabled:opacity-60"
       >
-        {submitting ? "Submitting…" : "Claim My Free Audit →"}
+        {sendingOtp ? "Sending OTP…" : "Send OTP →"}
       </button>
 
       <p className="text-center text-xs text-slate-500">
-        Takes 30 seconds · No pitch · Founder-reviewed by Gautam Punj
+        We&apos;ll send a 6-digit OTP to verify your number · No pitch · Founder-reviewed
       </p>
 
       <p className="text-center text-xs text-slate-500">
@@ -278,6 +393,8 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
           Message us on WhatsApp
         </a>
       </p>
+
+      <div id="recaptcha-container" />
     </form>
   );
 }
