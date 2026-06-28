@@ -187,13 +187,14 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
         <select
           value={industry}
           onChange={(e) => setIndustry(e.target.value)}
+          style={{ background: "#0d1828", color: "#fff" }}
           className={`${inputClass} cursor-pointer`}
         >
-          <option value="" disabled>
+          <option value="" disabled style={{ background: "#0d1828", color: "#94a3b8" }}>
             Select your industry
           </option>
           {INDUSTRIES.map((i) => (
-            <option key={i.value} value={i.value} style={{ background: "#1e293b", color: "#fff" }}>
+            <option key={i.value} value={i.value} style={{ background: "#0d1828", color: "#fff" }}>
               {i.label}
             </option>
           ))}
