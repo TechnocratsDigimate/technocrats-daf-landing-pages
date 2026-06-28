@@ -2,8 +2,6 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from "firebase/auth";
-import { getFirebaseAuth } from "@/lib/firebase";
 import { getStoredUtmParameters, trackEvent } from "@/lib/tracking";
 
 function normalizePhone(raw: string): string {
@@ -36,15 +34,7 @@ const inputClass =
   "w-full rounded-lg border border-white/10 bg-white/[0.05] px-4 py-3 text-white placeholder-slate-500 outline-none transition focus:border-gold/50 focus:ring-1 focus:ring-gold/30";
 const errorClass = "mt-1 text-xs text-red-400";
 
-function CustomSelect({
-  value,
-  onChange,
-  error,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  error?: string;
-}) {
+function CustomSelect({ value, onChange, error }: { value: string; onChange: (v: string) => void; error?: string }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -70,9 +60,7 @@ function CustomSelect({
         <span className={selected ? "text-white" : "text-slate-500"}>
           {selected ? selected.label : "Select your industry"}
         </span>
-        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
-          {open ? "▲" : "▼"}
-        </span>
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">{open ? "▲" : "▼"}</span>
       </button>
       {open && (
         <ul className="absolute z-50 mt-1 w-full rounded-lg border border-white/10 bg-navy py-1 shadow-xl">
@@ -80,9 +68,7 @@ function CustomSelect({
             <li
               key={i.value}
               onClick={() => { onChange(i.value); setOpen(false); }}
-              className={`cursor-pointer px-4 py-2.5 text-sm transition hover:bg-gold/10 hover:text-gold ${
-                value === i.value ? "text-gold" : "text-white"
-              }`}
+              className={`cursor-pointer px-4 py-2.5 text-sm transition hover:bg-gold/10 hover:text-gold ${value === i.value ? "text-gold" : "text-white"}`}
             >
               {i.label}
             </li>
@@ -108,11 +94,9 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
   const [industry, setIndustry] = useState("");
   const [otp, setOtp] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [sendingOtp, setSendingOtp] = useState(false);
+  const [sending, setSending] = useState(false);
   const [otpError, setOtpError] = useState("");
   const [countdown, setCountdown] = useState(0);
-  const confirmationRef = useRef<ConfirmationResult | null>(null);
-  const recaptchaRef = useRef<RecaptchaVerifier | null>(null);
   const startFired = useRef(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -149,64 +133,57 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
   async function handleSendOtp(e: FormEvent) {
     e.preventDefault();
     if (!validate()) return;
-    setSendingOtp(true);
+    setSending(true);
     setOtpError("");
 
     try {
-      const auth = await getFirebaseAuth();
-      if (!recaptchaRef.current) {
-        recaptchaRef.current = new RecaptchaVerifier(auth, "recaptcha-container", {
-          size: "invisible",
-        });
-      }
-      const phoneNumber = `+91${normalizePhone(phone)}`;
-      const result = await signInWithPhoneNumber(auth, phoneNumber, recaptchaRef.current);
-      confirmationRef.current = result;
-      setStep("otp");
-      startCountdown(30);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err);
-      const code = (err as { code?: string })?.code ?? "";
-      console.error("[OTP] Firebase error:", code, msg);
-      if (code.includes("too-many-requests")) {
-        setOtpError("Too many attempts. Please try again after some time.");
-      } else if (code.includes("invalid-phone-number")) {
-        setOtpError("Invalid phone number. Please check and try again.");
-      } else if (code.includes("app-not-authorized") || code.includes("unauthorized-domain")) {
-        setOtpError(`Domain not authorized in Firebase. (${code})`);
+      const res = await fetch("/api/otp/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: normalizePhone(phone) }),
+      });
+      const data = await res.json() as { ok: boolean; message?: string };
+      if (!data.ok) {
+        setOtpError(data.message ?? "Could not send OTP. Please try again.");
       } else {
-        setOtpError(`Could not send OTP. Error: ${code || msg}`);
+        setStep("otp");
+        startCountdown(30);
       }
-      recaptchaRef.current = null;
+    } catch {
+      setOtpError("Could not send OTP. Please try again.");
     } finally {
-      setSendingOtp(false);
+      setSending(false);
     }
   }
 
   async function handleVerifyOtp(e: FormEvent) {
     e.preventDefault();
-    if (!otp || otp.length < 6) {
-      setOtpError("Please enter the 6-digit OTP.");
-      return;
-    }
-    if (!confirmationRef.current) {
-      setOtpError("Session expired. Please go back and try again.");
-      return;
-    }
-
+    if (!otp || otp.length < 6) { setOtpError("Please enter the 6-digit OTP."); return; }
     setStep("submitting");
     setOtpError("");
 
+    // Verify OTP
     try {
-      await confirmationRef.current.confirm(otp);
+      const vRes = await fetch("/api/otp/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: normalizePhone(phone), otp }),
+      });
+      const vData = await vRes.json() as { ok: boolean; message?: string };
+      if (!vData.ok) {
+        setStep("otp");
+        setOtpError(vData.message ?? "Incorrect OTP. Please try again.");
+        return;
+      }
     } catch {
       setStep("otp");
-      setOtpError("Incorrect OTP. Please check and try again.");
+      setOtpError("Verification failed. Please try again.");
       return;
     }
 
     const w = window as Window & { fbq?: (...a: unknown[]) => void; dataLayer?: Record<string, unknown>[] };
 
+    // Submit lead
     try {
       const res = await fetch("/api/leads", {
         method: "POST",
@@ -227,8 +204,7 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
           utm: getStoredUtmParameters(),
         }),
       });
-
-      const data = (await res.json()) as { ok: boolean; message?: string };
+      const data = await res.json() as { ok: boolean; message?: string };
       if (!data.ok) throw new Error(data.message);
 
       if (w.fbq) {
@@ -248,21 +224,21 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
 
   async function handleResendOtp() {
     if (countdown > 0) return;
-    setSendingOtp(true);
+    setSending(true);
     setOtpError("");
     try {
-      const auth = await getFirebaseAuth();
-      if (!recaptchaRef.current) {
-        recaptchaRef.current = new RecaptchaVerifier(auth, "recaptcha-container", { size: "invisible" });
-      }
-      const result = await signInWithPhoneNumber(auth, `+91${normalizePhone(phone)}`, recaptchaRef.current);
-      confirmationRef.current = result;
-      startCountdown(30);
+      const res = await fetch("/api/otp/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: normalizePhone(phone) }),
+      });
+      const data = await res.json() as { ok: boolean; message?: string };
+      if (!data.ok) setOtpError(data.message ?? "Could not resend OTP.");
+      else startCountdown(30);
     } catch {
       setOtpError("Could not resend OTP. Please try again.");
-      recaptchaRef.current = null;
     } finally {
-      setSendingOtp(false);
+      setSending(false);
     }
   }
 
@@ -284,9 +260,7 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-slate-300">
-            Enter 6-digit OTP
-          </label>
+          <label className="mb-1.5 block text-sm font-medium text-slate-300">Enter 6-digit OTP</label>
           <input
             type="number"
             inputMode="numeric"
@@ -320,15 +294,13 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
             <button
               type="button"
               onClick={handleResendOtp}
-              disabled={sendingOtp}
+              disabled={sending}
               className="text-gold underline underline-offset-2 disabled:opacity-50"
             >
-              {sendingOtp ? "Sending…" : "Resend OTP"}
+              {sending ? "Sending…" : "Resend OTP"}
             </button>
           )}
         </p>
-
-        <div id="recaptcha-container" />
       </form>
     );
   }
@@ -340,7 +312,6 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
         Where should we send your audit findings?
       </p>
 
-      {/* Name */}
       <div>
         <input
           type="text"
@@ -354,7 +325,6 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
         {errors.name && <p className={errorClass}>{errors.name}</p>}
       </div>
 
-      {/* WhatsApp */}
       <div>
         <input
           type="tel"
@@ -367,7 +337,6 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
         {errors.phone && <p className={errorClass}>{errors.phone}</p>}
       </div>
 
-      {/* Industry */}
       <CustomSelect value={industry} onChange={setIndustry} error={errors.industry} />
 
       {otpError && (
@@ -378,10 +347,10 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
 
       <button
         type="submit"
-        disabled={sendingOtp}
+        disabled={sending}
         className="w-full rounded-lg bg-gold px-5 py-4 text-center font-bold text-ink transition hover:bg-gold-soft disabled:opacity-60"
       >
-        {sendingOtp ? "Sending OTP…" : "Send OTP →"}
+        {sending ? "Sending OTP…" : "Send OTP →"}
       </button>
 
       <p className="text-center text-xs text-slate-500">
@@ -399,8 +368,6 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
           Message us on WhatsApp
         </a>
       </p>
-
-      <div id="recaptcha-container" />
     </form>
   );
 }
