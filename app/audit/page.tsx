@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AuditShortForm } from "./AuditShortForm";
+import dynamic from "next/dynamic";
+
+const AuditShortForm = dynamic(
+  () => import("./AuditShortForm").then((m) => ({ default: m.AuditShortForm })),
+  { ssr: false, loading: () => <div className="h-64 rounded-2xl border border-white/10 bg-white/[0.03] animate-pulse" /> }
+);
 
 export const metadata: Metadata = {
   title: "Free Growth Audit — Find Where Your Ad Spend Is Leaking | Technocrats Digimate",
