@@ -165,13 +165,17 @@ export function AuditShortForm({ formId = "audit-top" }: AuditShortFormProps) {
       setStep("otp");
       startCountdown(30);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "";
-      if (msg.includes("too-many-requests")) {
+      const msg = err instanceof Error ? err.message : String(err);
+      const code = (err as { code?: string })?.code ?? "";
+      console.error("[OTP] Firebase error:", code, msg);
+      if (code.includes("too-many-requests")) {
         setOtpError("Too many attempts. Please try again after some time.");
-      } else if (msg.includes("invalid-phone-number")) {
+      } else if (code.includes("invalid-phone-number")) {
         setOtpError("Invalid phone number. Please check and try again.");
+      } else if (code.includes("app-not-authorized") || code.includes("unauthorized-domain")) {
+        setOtpError(`Domain not authorized in Firebase. (${code})`);
       } else {
-        setOtpError("Could not send OTP. Please try again.");
+        setOtpError(`Could not send OTP. Error: ${code || msg}`);
       }
       recaptchaRef.current = null;
     } finally {
