@@ -1,11 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getCourseBySlug, COURSES } from "@/lib/courses";
+import { getCourseBySlug } from "@/lib/courses";
 import { RazorpayCheckout } from "./RazorpayCheckout";
 
-export function generateStaticParams() {
-  return COURSES.map((c) => ({ slug: c.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export function generateMetadata({ params }: { params: { slug: string } }) {
   const course = getCourseBySlug(params.slug);
