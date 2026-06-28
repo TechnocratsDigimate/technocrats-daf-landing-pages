@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { BrandHeader } from "@/components/BrandHeader";
+import { Footer } from "@/components/Footer";
 import { COURSES } from "@/lib/courses";
 
 export const metadata = {
@@ -16,6 +18,8 @@ const typeColor: Record<string, string> = {
 
 export default function CoursesPage() {
   return (
+    <>
+    <BrandHeader />
     <main className="min-h-screen bg-navy text-white">
       {/* Hero */}
       <section className="mx-auto max-w-4xl px-6 pb-12 pt-20 text-center">
@@ -103,5 +107,7 @@ export default function CoursesPage() {
         </div>
       </section>
     </main>
+    <Footer />
+    </>
   );
 }

@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { BrandHeader } from "@/components/BrandHeader";
+import { Footer } from "@/components/Footer";
 import { getCourseBySlug } from "@/lib/courses";
 import { RazorpayCheckout } from "./RazorpayCheckout";
 
@@ -21,6 +23,8 @@ export default function CoursePage({ params }: { params: { slug: string } }) {
   const discount = Math.round(((course.originalPrice - course.price) / course.originalPrice) * 100);
 
   return (
+    <>
+    <BrandHeader />
     <main className="min-h-screen bg-navy text-white">
       {/* Breadcrumb */}
       <div className="mx-auto max-w-5xl px-6 pt-8">
@@ -150,5 +154,7 @@ export default function CoursePage({ params }: { params: { slug: string } }) {
         </div>
       </div>
     </main>
+    <Footer />
+    </>
   );
 }

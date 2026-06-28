@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { BrandHeader } from "@/components/BrandHeader";
+import { Footer } from "@/components/Footer";
 import { getCourseBySlug } from "@/lib/courses";
 
 export const metadata = {
@@ -17,6 +19,8 @@ export default function ThankYouCoursePage({
     "Your purchase is confirmed! You'll receive access details on WhatsApp within 2 hours.";
 
   return (
+    <>
+    <BrandHeader />
     <main className="flex min-h-screen flex-col items-center justify-center bg-navy px-6 py-20 text-center text-white">
       <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10 text-4xl">
         ✓
@@ -49,5 +53,7 @@ export default function ThankYouCoursePage({
         Browse other programs
       </Link>
     </main>
+    <Footer />
+    </>
   );
 }
