@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const auth = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
-    const receiptId = `receipt_${slug}_${Date.now()}`;
+    const receiptId = `rcpt_${Date.now().toString().slice(-10)}`;
 
     const res = await fetch("https://api.razorpay.com/v1/orders", {
       method: "POST",
