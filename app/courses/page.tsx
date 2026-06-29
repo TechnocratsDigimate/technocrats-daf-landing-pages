@@ -78,7 +78,7 @@ export default function CoursesPage() {
                 </div>
 
                 <Link
-                  href={`/courses/${course.slug}`}
+                  href={`/courses/${course.slug}/`}
                   className="block w-full rounded-xl bg-gold py-3 text-center text-sm font-bold text-ink transition hover:bg-gold-soft"
                 >
                   {course.cta}
