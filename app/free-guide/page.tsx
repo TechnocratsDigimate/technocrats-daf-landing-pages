@@ -42,7 +42,7 @@ export default function FreeGuidePage() {
       <main className="min-h-screen bg-navy text-white">
 
         {/* Hero */}
-        <section className="mx-auto max-w-5xl px-6 pb-16 pt-20">
+        <section className="mx-auto max-w-7xl px-6 pb-16 pt-28">
           <div className="grid gap-12 lg:grid-cols-[1fr_400px]">
             {/* Left */}
             <div>
@@ -102,7 +102,7 @@ export default function FreeGuidePage() {
 
         {/* Tools breakdown */}
         <section className="border-t border-white/5 bg-white/[0.02]">
-          <div className="mx-auto max-w-5xl px-6 py-16">
+          <div className="mx-auto max-w-7xl px-6 py-16">
             <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-gold">The Toolkit · 4 Tools</p>
             <h2 className="mb-10 text-2xl font-extrabold text-white md:text-3xl">
               What each tool does — and what it replaces
@@ -128,7 +128,7 @@ export default function FreeGuidePage() {
         </section>
 
         {/* System flow */}
-        <section className="mx-auto max-w-5xl px-6 py-16">
+        <section className="mx-auto max-w-7xl px-6 py-16">
           <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-gold">The System</p>
           <h2 className="mb-10 text-2xl font-extrabold text-white md:text-3xl">
             Used together — it becomes a lead-gen production line
@@ -162,7 +162,7 @@ export default function FreeGuidePage() {
 
         {/* Bottom CTA */}
         <section className="border-t border-white/5 bg-white/[0.02]">
-          <div className="mx-auto max-w-3xl px-6 py-16 text-center">
+          <div className="mx-auto max-w-4xl px-6 py-16 text-center">
             <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-gold">Free Download</p>
             <h2 className="mb-4 text-2xl font-extrabold text-white md:text-3xl">
               Get the guide. Start building the system today.
