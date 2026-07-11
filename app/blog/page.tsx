@@ -49,7 +49,7 @@ export default function BlogPage() {
 
       {/* Hero */}
       <section className="pt-32 pb-16 md:pt-40 md:pb-20">
-        <div className="mx-auto max-w-5xl px-5">
+        <div className="mx-auto max-w-7xl px-5">
           <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gold">
             The Technocrats Blog
           </p>
@@ -66,7 +66,7 @@ export default function BlogPage() {
       {/* Featured post */}
       {featured && (
         <section className="pb-12">
-          <div className="mx-auto max-w-5xl px-5">
+          <div className="mx-auto max-w-7xl px-5">
             <Link href={`/blog/${featured.slug}`} className="group block">
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 transition hover:border-gold/30 hover:bg-white/[0.05]">
                 <div className="mb-4 flex items-center gap-3">
@@ -91,7 +91,7 @@ export default function BlogPage() {
 
       {/* Post grid */}
       <section className="pb-20">
-        <div className="mx-auto max-w-5xl px-5">
+        <div className="mx-auto max-w-7xl px-5">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {rest.map((post) => (
               <Link key={post.slug} href={`/blog/${post.slug}`} className="group block">

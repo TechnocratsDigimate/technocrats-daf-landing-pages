@@ -38,7 +38,7 @@ export default function CoursesPage() {
       </section>
 
       {/* Cards */}
-      <section className="mx-auto max-w-5xl px-6 pb-24">
+      <section className="mx-auto max-w-7xl px-6 pb-24">
         <div className="grid gap-8 md:grid-cols-3">
           {COURSES.map((course) => (
             <article

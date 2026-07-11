@@ -50,7 +50,7 @@ export default function AuditPage() {
     <div className="min-h-screen bg-ink text-white">
       {/* ── Minimal header — logo only ──────────────────────────────────── */}
       <header className="border-b border-white/10 bg-ink/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-5xl items-center px-5">
+        <div className="mx-auto flex h-16 max-w-7xl items-center px-5">
           <Link href="/">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -63,7 +63,7 @@ export default function AuditPage() {
       </header>
 
       {/* ── Hero + Form (above fold on mobile) ──────────────────────────── */}
-      <section className="mx-auto max-w-5xl px-5 pt-10 pb-6 md:pt-16 md:pb-10">
+      <section className="mx-auto max-w-7xl px-5 pt-10 pb-6 md:pt-16 md:pb-10">
         <div className="grid gap-8 md:grid-cols-[1fr_420px] md:items-start">
           {/* Left — copy */}
           <div>
@@ -90,7 +90,7 @@ export default function AuditPage() {
 
       {/* ── Trust signals ────────────────────────────────────────────────── */}
       <section className="border-t border-white/10 bg-white/[0.02] py-10">
-        <div className="mx-auto max-w-5xl px-5">
+        <div className="mx-auto max-w-7xl px-5">
           <div className="grid gap-6 sm:grid-cols-3">
             {TRUST_SIGNALS.map((t) => (
               <div key={t.label} className="flex gap-4">
@@ -107,7 +107,7 @@ export default function AuditPage() {
 
       {/* ── What gets audited ────────────────────────────────────────────── */}
       <section className="py-12">
-        <div className="mx-auto max-w-5xl px-5">
+        <div className="mx-auto max-w-7xl px-5">
           <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-gold">
             What we look at
           </p>
@@ -128,7 +128,7 @@ export default function AuditPage() {
 
       {/* ── Founder credibility ──────────────────────────────────────────── */}
       <section className="border-t border-white/10 bg-white/[0.02] py-12">
-        <div className="mx-auto max-w-3xl px-5 text-center">
+        <div className="mx-auto max-w-4xl px-5 text-center">
           <h2 className="mb-4 text-xl font-bold text-white md:text-2xl">
             Reviewed by Gautam Punj — not an intern
           </h2>
@@ -155,7 +155,7 @@ export default function AuditPage() {
 
       {/* ── Minimal footer ───────────────────────────────────────────────── */}
       <footer className="border-t border-white/10 py-6">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-5 text-xs text-slate-500">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 text-xs text-slate-500">
           <span>© {new Date().getFullYear()} Technocrats Digimate Pvt Ltd</span>
           <Link href="/privacy-policy" className="hover:text-gold">
             Privacy Policy

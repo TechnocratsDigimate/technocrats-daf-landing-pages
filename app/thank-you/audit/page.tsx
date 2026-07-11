@@ -11,7 +11,7 @@ export default function ThankYouAuditPage() {
     <div className="min-h-screen bg-ink text-white flex flex-col">
       {/* Minimal header */}
       <header className="border-b border-white/10 bg-ink/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-5xl items-center px-5">
+        <div className="mx-auto flex h-16 max-w-7xl items-center px-5">
           <Link href="/">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -56,7 +56,7 @@ export default function ThankYouAuditPage() {
 
       {/* Minimal footer */}
       <footer className="border-t border-white/10 py-6">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-5 text-xs text-slate-500">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 text-xs text-slate-500">
           <span>© {new Date().getFullYear()} Technocrats Digimate Pvt Ltd</span>
           <Link href="/privacy-policy" className="hover:text-gold">
             Privacy Policy

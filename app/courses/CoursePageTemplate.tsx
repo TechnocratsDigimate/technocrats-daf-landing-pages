@@ -12,13 +12,13 @@ export function CoursePageTemplate({ course }: { course: Course }) {
       <BrandHeader />
       <main className="min-h-screen bg-navy text-white">
         {/* Breadcrumb */}
-        <div className="mx-auto max-w-5xl px-6 pt-8">
+        <div className="mx-auto max-w-7xl px-6 pt-8">
           <Link href="/courses" className="text-sm text-gold hover:underline">
             ← All Programs
           </Link>
         </div>
 
-        <div className="mx-auto max-w-5xl px-6 py-12">
+        <div className="mx-auto max-w-7xl px-6 py-12">
           <div className="grid gap-12 lg:grid-cols-[1fr_380px]">
             {/* Left — Content */}
             <div>
