@@ -1,11 +1,12 @@
 """
 Auto Blog Publisher — Technocrats Digimate
 Runs every 6 hours via GitHub Actions.
-Fetches Google Trends → generates blog with Claude API → publishes to posts.ts
+Fetches Google Trends → generates blog with Claude API → publishes to posts.ts → pings Google Indexing API
 """
 
 import os
 import re
+import json
 import time
 import random
 import requests
@@ -265,11 +266,56 @@ def append_post(post, posts_path):
     print(f"✅ Published: {post['slug']}")
 
 
+# ── Google Indexing API ───────────────────────────────────────────────────────
+
+def get_indexing_token(service_account_json: str) -> str:
+    """Get OAuth2 access token from service account credentials."""
+    try:
+        from google.oauth2 import service_account
+        import google.auth.transport.requests
+
+        info = json.loads(service_account_json)
+        credentials = service_account.Credentials.from_service_account_info(
+            info,
+            scopes=["https://www.googleapis.com/auth/indexing"],
+        )
+        credentials.refresh(google.auth.transport.requests.Request())
+        return credentials.token
+    except Exception as e:
+        print(f"⚠️  Could not get indexing token: {e}")
+        return ""
+
+
+def ping_google_indexing(url: str, service_account_json: str):
+    """Notify Google Indexing API about a URL update."""
+    token = get_indexing_token(service_account_json)
+    if not token:
+        return
+
+    try:
+        res = requests.post(
+            "https://indexing.googleapis.com/v3/urlNotifications:publish",
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json",
+            },
+            json={"url": url, "type": "URL_UPDATED"},
+            timeout=15,
+        )
+        if res.status_code == 200:
+            print(f"✅ Indexing requested: {url}")
+        else:
+            print(f"⚠️  Indexing API response {res.status_code}: {res.text[:200]}")
+    except Exception as e:
+        print(f"⚠️  Indexing ping failed: {e}")
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
     anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
     unsplash_key = os.environ.get("UNSPLASH_ACCESS_KEY", "")
+    indexing_key = os.environ.get("GOOGLE_INDEXING_KEY", "")
 
     if not anthropic_key:
         raise SystemExit("❌ ANTHROPIC_API_KEY not set")
@@ -335,6 +381,15 @@ def main():
             print(f"   Slug: /blog/{slug}")
             print(f"   Category: {post['category']}")
             print(f"   Date: {post['publishedAt']}")
+
+            # Ping Google Indexing API
+            if indexing_key:
+                blog_url = f"https://technocratsdigimate.com/blog/{slug}"
+                ping_google_indexing(blog_url, indexing_key)
+                ping_google_indexing("https://technocratsdigimate.com/blog", indexing_key)
+            else:
+                print("⚠️  GOOGLE_INDEXING_KEY not set — skipping indexing ping")
+
             return  # success — stop
 
         except Exception as e:
