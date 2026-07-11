@@ -201,7 +201,7 @@ export default async function BlogPostPage({ params }: Props) {
       />
       <BrandHeader />
 
-      <article className="mx-auto max-w-3xl px-5 pt-32 pb-20 md:pt-40">
+      <article className="mx-auto max-w-7xl px-5 pt-32 pb-20 md:pt-40">
         {/* Breadcrumb */}
         <nav className="mb-8 flex items-center gap-2 text-sm text-slate-500">
           <Link href="/blog" className="hover:text-gold">Blog</Link>
