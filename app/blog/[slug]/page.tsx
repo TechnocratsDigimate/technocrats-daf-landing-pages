@@ -227,6 +227,18 @@ export default async function BlogPostPage({ params }: Props) {
           <p className="mt-4 text-lg text-slate-300">{post.description}</p>
         </header>
 
+        {/* Hero image */}
+        {post.image && (
+          <div className="mb-10 overflow-hidden rounded-2xl">
+            <img
+              src={post.image}
+              alt={post.title}
+              className="w-full object-cover"
+              style={{ maxHeight: "420px" }}
+            />
+          </div>
+        )}
+
         {/* Content */}
         <div className="prose-custom">
           {renderContent(post.content)}
