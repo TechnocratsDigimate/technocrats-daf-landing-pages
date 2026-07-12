@@ -32,12 +32,24 @@ export const metadata: Metadata = {
 
 const orgSchema = {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "Technocrats Digimate Pvt Ltd",
+  "@type": ["Organization", "LocalBusiness"],
+  name: "Technocrats Digimate",
   url: "https://technocratsdigimate.com",
   logo: "https://technocratsdigimate.com/assets/brand/logo-white.svg",
+  description: "Performance marketing agency in India specialising in Meta Ads, Google Ads, lead generation, and conversion tracking for Indian businesses.",
+  telephone: "+919467744000",
+  email: "info@technocratsdigimate.com",
+  address: {
+    "@type": "PostalAddress",
+    addressCountry: "IN",
+    addressRegion: "Punjab",
+    addressLocality: "Chandigarh",
+  },
+  areaServed: ["IN"],
+  priceRange: "₹₹",
   contactPoint: {
     "@type": "ContactPoint",
+    telephone: "+919467744000",
     contactType: "customer support",
     areaServed: "IN",
     availableLanguage: ["English", "Hindi"],

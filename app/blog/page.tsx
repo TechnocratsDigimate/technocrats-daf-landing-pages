@@ -5,17 +5,18 @@ import { Footer } from "@/components/Footer";
 import { getAllPosts } from "@/lib/blog/posts";
 
 export const metadata: Metadata = {
-  title: "Performance Marketing & AI Blog | Technocrats Digimate",
+  title: "Performance Marketing Blog India — Meta Ads, Google Ads, AI | Technocrats Digimate",
   description:
-    "Practical guides on Meta Ads, Google Ads, AI tools, conversion tracking, and lead generation for Indian businesses. No fluff — only what actually works.",
+    "Practical guides on Meta Ads, Google Ads, AI tools, conversion tracking, and lead generation for Indian businesses. Written by practitioners, not content marketers.",
   alternates: { canonical: "https://technocratsdigimate.com/blog" },
   openGraph: {
-    title: "Performance Marketing & AI Blog | Technocrats Digimate",
+    title: "Performance Marketing Blog India — Meta Ads, Google Ads, AI | Technocrats Digimate",
     description:
       "Practical guides on Meta Ads, Google Ads, AI tools, and lead generation for Indian businesses.",
     url: "https://technocratsdigimate.com/blog",
     siteName: "Technocrats Digimate",
     type: "website",
+    images: [{ url: "/assets/brand/og-blog.png", width: 1200, height: 630, alt: "Technocrats Digimate Blog" }],
   },
   twitter: { card: "summary_large_image" },
 };
@@ -54,8 +55,8 @@ export default function BlogPage() {
             The Technocrats Blog
           </p>
           <h1 className="text-4xl font-bold leading-tight text-white md:text-5xl">
-            Performance Marketing & AI — <br className="hidden md:block" />
-            What&apos;s Actually Working
+            Performance Marketing Blog — <br className="hidden md:block" />
+            Insights for Indian Businesses
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-slate-300">
             Practical guides on Meta Ads, Google Ads, AI tools, and lead generation. Written by practitioners, not content marketers.

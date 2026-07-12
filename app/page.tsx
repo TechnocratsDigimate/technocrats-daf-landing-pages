@@ -16,14 +16,14 @@ import { FaqAccordion } from "@/components/home/FaqAccordion";
 import { FooterCtaSection } from "@/components/home/FooterCtaSection";
 
 export const metadata: Metadata = {
-  title: "Performance Marketing & Lead Generation Agency | Technocrats Digimate",
+  title: "Performance Marketing Agency India — Predictable Lead Generation | Technocrats Digimate",
   description:
     "Technocrats Digimate builds predictable lead-generation systems using Meta Ads, Google Ads, landing pages, tracking, WhatsApp follow-up, CRM visibility, and reporting.",
   alternates: {
     canonical: "https://technocratsdigimate.com/"
   },
   openGraph: {
-    title: "Performance Marketing & Lead Generation Agency | Technocrats Digimate",
+    title: "Performance Marketing Agency India — Predictable Lead Generation | Technocrats Digimate",
     description:
       "Technocrats Digimate builds predictable lead-generation systems using Meta Ads, Google Ads, landing pages, tracking, WhatsApp follow-up, CRM visibility, and reporting.",
     url: "https://technocratsdigimate.com/",

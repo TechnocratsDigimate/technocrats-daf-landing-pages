@@ -15,6 +15,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = getPostBySlug(slug);
   if (!post) return {};
+  const ogImages = post.image
+    ? [{ url: post.image, width: 1080, height: 720, alt: post.title }]
+    : [{ url: "/assets/brand/og-blog.png", width: 1200, height: 630, alt: post.title }];
+
   return {
     title: `${post.title} | Technocrats Digimate`,
     description: post.description,
@@ -26,8 +30,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: "Technocrats Digimate",
       type: "article",
       publishedTime: post.publishedAt,
+      images: ogImages,
     },
-    twitter: { card: "summary_large_image", title: post.title, description: post.description },
+    twitter: { card: "summary_large_image", title: post.title, description: post.description, images: ogImages.map(i => i.url) },
   };
 }
 
@@ -185,12 +190,37 @@ export default async function BlogPostPage({ params }: Props) {
     headline: post.title,
     description: post.description,
     datePublished: post.publishedAt,
-    author: { "@type": "Person", name: "Gautam Punj" },
+    dateModified: post.publishedAt,
+    image: post.image || "https://technocratsdigimate.com/assets/brand/og-blog.png",
+    author: {
+      "@type": "Person",
+      name: "Gautam Punj",
+      url: "https://technocratsdigimate.com",
+    },
     publisher: {
       "@type": "Organization",
       name: "Technocrats Digimate",
       url: "https://technocratsdigimate.com",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://technocratsdigimate.com/assets/brand/logo-white.svg",
+      },
     },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://technocratsdigimate.com/blog/${slug}`,
+    },
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://technocratsdigimate.com" },
+      { "@type": "ListItem", position: 2, name: "Blog", item: "https://technocratsdigimate.com/blog" },
+      { "@type": "ListItem", position: 3, name: post.category, item: `https://technocratsdigimate.com/blog` },
+      { "@type": "ListItem", position: 4, name: post.title, item: `https://technocratsdigimate.com/blog/${slug}` },
+    ],
   };
 
   return (
@@ -198,6 +228,10 @@ export default async function BlogPostPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <BrandHeader />
 

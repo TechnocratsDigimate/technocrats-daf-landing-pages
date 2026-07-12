@@ -8,15 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: [
-          "/wp-admin/",
-          "/wp-content/",
-          "/wp-includes/",
-          "/wp-login.php",
-          "/xmlrpc.php",
-          "/feed/",
-          "/wp-json/",
-        ],
+        disallow: ["/api/", "/thank-you/"],
       },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,

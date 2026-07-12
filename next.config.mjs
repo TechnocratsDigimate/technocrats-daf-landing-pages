@@ -24,6 +24,9 @@ const nextConfig = {
       { source: "/testimonial/", destination: "/#proof", permanent: true },
       { source: "/search-engine-optimization", destination: "/services/performance-marketing-lead-generation", permanent: true },
       { source: "/search-engine-optimization/", destination: "/services/performance-marketing-lead-generation", permanent: true },
+      // Duplicate blog slugs → canonical versions
+      { source: "/blog/meta-ad-lead-quality-problem-fix", destination: "/blog/meta-ad-lead-quality-problem-fix-india", permanent: true },
+      { source: "/blog/meta-ad-lead-quality-problem-fix/", destination: "/blog/meta-ad-lead-quality-problem-fix-india", permanent: true },
       // Old blog URL formats → current blog
       { source: "/blog/mellstroy", destination: "/blog", permanent: true },
       { source: "/blog/mellstroy/", destination: "/blog", permanent: true },
