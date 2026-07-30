@@ -1,16 +1,31 @@
-"""
-Auto Blog Publisher — Technocrats Digimate
-Runs every 6 hours via GitHub Actions.
-Fetches Google Trends → generates blog with Claude API → publishes to posts.ts → pings Google Indexing API
+"""Discover and draft a guarded structured article candidate.
+
+This script does not publish, commit, push, merge, deploy, or call the Google
+Indexing API. The GitHub workflow passes its structured candidate through the
+independent policy validator before any pull request can be merged.
 """
 
-import os
-import re
+from __future__ import annotations
+
+import argparse
 import json
-import time
+import os
 import random
-import requests
+import re
+import sys
+import time
 from datetime import datetime, timezone
+from pathlib import Path
+
+from blog_pipeline import (
+    CONFIG_PATH,
+    collision_report,
+    existing_articles,
+    load_json,
+    normalize_text,
+    pending_topics,
+    write_json,
+)
 
 try:
     from pytrends.request import TrendReq
@@ -23,8 +38,6 @@ except ImportError:
     anthropic = None
 
 
-# ── Keywords to track ────────────────────────────────────────────────────────
-
 KEYWORDS = [
     ["AI marketing", "Digital Marketing"],
     ["Meta Ads", "Facebook Ads"],
@@ -32,375 +45,217 @@ KEYWORDS = [
     ["WhatsApp marketing", "Marketing Automation"],
     ["Performance Marketing", "Lead Generation"],
     ["Instagram Ads", "Social Media Marketing"],
-    ["ChatGPT", "AI tools"],
-    ["Programmatic advertising", "Retargeting"],
+    ["conversion tracking", "GA4"],
 ]
 
 FALLBACK_TOPICS = [
-    ("How AI Is Changing Meta Ads in 2026 — What Indian Marketers Need to Know", "AI marketing", "AI Tools"),
-    ("Why Your Meta Ads CPL Is Rising Every Week (And How to Fix It)", "Meta Ads", "Meta Ads"),
-    ("WhatsApp Marketing Automation for Indian Service Businesses: The Complete Guide", "WhatsApp marketing", "Marketing Automation"),
-    ("Google Ads vs Meta Ads for Lead Generation in India: Which Actually Works in 2026", "Google Ads", "Google Ads"),
-    ("How to Use Free AI Tools to Replace a ₹20,000/month Marketing Stack", "AI tools", "AI Tools"),
-    ("Performance Marketing for Real Estate in India: Meta Ads System That Gets Quality Leads", "Performance Marketing", "Meta Ads"),
-    ("The Lead Quality Problem: Why 90% of Meta Ad Leads Don't Convert (And How to Fix It)", "Lead Generation", "Meta Ads"),
-    ("Instagram Reels Ads for Indian Businesses: Hooks, Formats, and What Actually Converts", "Instagram Ads", "Meta Ads"),
+    ("How to verify Meta conversion tracking signals", "verify meta conversion tracking", "Tracking & Analytics"),
+    ("How to diagnose Google Ads search term waste", "google ads search term waste", "Google Ads"),
+    ("WhatsApp lead follow-up workflow checklist", "whatsapp lead follow up workflow", "WhatsApp & CRM Automation"),
+    ("Landing page message-match audit process", "landing page message match audit", "Landing Pages & CRO"),
 ]
 
 CATEGORY_MAP = {
-    "Meta Ads": ["meta ads", "facebook ads", "advantage+", "lead ads", "instagram ads", "reels ads"],
-    "Google Ads": ["google ads", "ppc", "search ads", "programmatic", "display ads", "performance max"],
-    "AI Tools": ["ai", "chatgpt", "gemini", "artificial intelligence", "automation tools", "ai marketing"],
-    "Marketing Automation": ["whatsapp", "automation", "crm", "follow-up", "workflow", "zapier"],
-    "Tracking & Analytics": ["tracking", "analytics", "pixel", "capi", "conversion", "data"],
+    "Meta Ads": ["meta ads", "facebook ads", "advantage+", "lead ads", "instagram ads"],
+    "Google Ads": ["google ads", "ppc", "search ads", "performance max"],
+    "AI Marketing Tools": ["ai", "chatgpt", "gemini", "artificial intelligence"],
+    "WhatsApp & CRM Automation": ["whatsapp", "automation", "crm", "follow-up"],
+    "Tracking & Analytics": ["tracking", "analytics", "pixel", "capi", "conversion", "ga4"],
+    "Landing Pages & CRO": ["landing page", "cro", "conversion rate", "message match"],
 }
 
-
-# ── Google Trends ─────────────────────────────────────────────────────────────
-
-def get_trending_topics():
-    if TrendReq is None:
-        print("pytrends not available, using fallback")
-        return []
-
-    pytrends = TrendReq(hl="en-US", tz=330, timeout=(10, 30), retries=2, backoff_factor=0.5)
-    collected = []
-
-    kw_group = random.choice(KEYWORDS)
-    geos = ["IN", "US"]
-
-    for geo in geos:
-        try:
-            pytrends.build_payload(kw_group, cat=0, timeframe="now 7-d", geo=geo)
-            related = pytrends.related_queries()
-
-            for kw in kw_group:
-                if kw in related and related[kw] is not None:
-                    for trend_type in ["rising", "top"]:
-                        df = related[kw].get(trend_type)
-                        if df is not None and not df.empty:
-                            for _, row in df.head(5).iterrows():
-                                collected.append({
-                                    "query": row["query"],
-                                    "value": int(row["value"]) if trend_type == "rising" else 10,
-                                    "base_keyword": kw,
-                                    "geo": geo,
-                                })
-            time.sleep(2)
-        except Exception as e:
-            print(f"Trends error ({geo}): {e}")
-            continue
-
-    # Filter out very short or non-marketing queries
-    filtered = [t for t in collected if len(t["query"]) > 10 and not any(
-        x in t["query"].lower() for x in ["celebrity", "movie", "cricket", "ipl", "sports"]
-    )]
-    filtered.sort(key=lambda x: x["value"], reverse=True)
-    return filtered[:10]
-
-
-# ── Category Detection ────────────────────────────────────────────────────────
-
-def detect_category(text):
-    text_lower = text.lower()
-    for category, keywords in CATEGORY_MAP.items():
-        if any(kw in text_lower for kw in keywords):
-            return category
-    return "Marketing Automation"
-
-
-# ── Unsplash Image ────────────────────────────────────────────────────────────
-
-def get_unsplash_image(query, access_key):
-    if not access_key:
-        return ""
-    try:
-        res = requests.get(
-            "https://api.unsplash.com/search/photos",
-            params={"query": query, "per_page": 5, "orientation": "landscape"},
-            headers={"Authorization": f"Client-ID {access_key}"},
-            timeout=10,
-        )
-        data = res.json()
-        if data.get("results"):
-            photo = random.choice(data["results"][:3])
-            return photo["urls"]["regular"]
-    except Exception as e:
-        print(f"Unsplash error: {e}")
-    return ""
-
-
-# ── Blog Generation ───────────────────────────────────────────────────────────
-
-SYSTEM_PROMPT = """You are a senior performance marketing writer for Technocrats Digimate, an Indian
-digital marketing agency run by Gautam Punj. Write practical, human-sounding blog posts that:
-- Speak directly to Indian business owners, marketers, and agency professionals
-- Use a sharp, no-fluff tone — like a senior explaining to a peer, not lecturing
-- Reference Indian market realities (rupees ₹, Indian industries, metro cities, tier-2 growth)
-- Are packed with specific, actionable insights — not generic advice
-- Use natural keyword integration, never forced
-- Format in clean markdown with H2 and H3 headings
-- 1000–1500 words strictly
-- Never start with "In today's digital landscape", "In conclusion", or AI-clichés
-- End with a CTA: "Want to see how this applies to your specific business? [Book a free growth audit](https://technocratsdigimate.com/audit) — Gautam personally reviews every setup."
-"""
-
-def generate_blog(topic, base_keyword, client):
-    category = detect_category(f"{topic} {base_keyword}")
-
-    prompt = f"""Write a blog post for Technocrats Digimate's website about: "{topic}"
-
-Context: {base_keyword} — written for Indian performance marketers and business owners.
-
-Return your response in EXACTLY this format:
-
-TITLE: [compelling SEO title with primary keyword, under 70 chars]
-DESCRIPTION: [2-sentence meta description, 150-160 chars total]
-CATEGORY: {category}
-READ_TIME: [e.g. "6 min read"]
-SLUG: [lowercase-hyphenated-slug, max 60 chars]
-
----CONTENT---
-[Full markdown blog post, 1000-1500 words, starting with ## (first H2 heading)]
+SYSTEM_PROMPT = """You draft low-risk evergreen educational content for Technocrats
+Digimate. Return one valid JSON object only. Do not wrap it in Markdown.
 
 Rules:
-- Open with a hook: a stat, a sharp observation, or a question that makes them stop scrolling
-- Use H2 for main sections, H3 for sub-points
-- Bold key terms with **bold**
-- Include at least one practical example using Indian industry (real estate, clinics, coaching, study abroad)
-- Include at least one numbered list or bullet list of actionable steps
-- End with the CTA linking to https://technocratsdigimate.com/audit
-- Related keywords to use naturally: {base_keyword}, performance marketing, Indian businesses, lead generation, ROI, Meta Ads, Google Ads, digital marketing India
+- Never invent a URL, source, statistic, price, benchmark, client, case study,
+  screenshot, certification, testimonial, campaign result or first-person experience.
+- Use only official primary sources. Source IDs must be cited in the body as
+  [source:source-id].
+- Do not claim Google Trends proves a factual statement.
+- Do not use precise percentages, currency amounts or performance benchmarks.
+- Do not use "our campaigns", "our clients" or "we achieved".
+- Use H2/H3 Markdown headings, a useful introduction, a practical framework and
+  checklist, and at least two relevant Technocrats Digimate internal links.
+- Links must use valid Markdown syntax.
+- Do not include an H1 in the body.
+- If the topic needs uncertain claims, set publicationMode to "manual-review".
+- AI validation is not human fact-checking.
 """
 
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=3000,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": prompt}],
-    )
 
-    return response.content[0].text, category
-
-
-# ── Response Parser ───────────────────────────────────────────────────────────
-
-def parse_response(text):
-    metadata = {}
-    content = ""
-
-    # Extract metadata lines
-    for field in ["TITLE", "DESCRIPTION", "CATEGORY", "READ_TIME", "SLUG"]:
-        match = re.search(rf"^{field}:\s*(.+)$", text, re.MULTILINE)
-        if match:
-            metadata[field.lower().replace("_", "")] = match.group(1).strip()
-
-    # Extract content after ---CONTENT---
-    content_match = re.search(r"---CONTENT---\s*([\s\S]+)", text)
-    if content_match:
-        content = content_match.group(1).strip()
-    else:
-        # Fallback: everything after the last metadata line that starts with ##
-        h2_match = re.search(r"(## .+[\s\S]+)", text)
-        if h2_match:
-            content = h2_match.group(1).strip()
-
-    # Escape for TypeScript template literal
-    content = content.replace("\\", "\\\\").replace("`", "\\`").replace("${", "\\${")
-
-    return metadata, content
+def detect_category(value: str) -> str:
+    lowered = value.lower()
+    for category, terms in CATEGORY_MAP.items():
+        if any(term in lowered for term in terms):
+            return category
+    return "Performance Marketing"
 
 
-# ── Slug helpers ──────────────────────────────────────────────────────────────
-
-def make_slug(title):
-    slug = title.lower()
-    slug = re.sub(r"[^a-z0-9\s-]", "", slug)
-    slug = re.sub(r"\s+", "-", slug.strip())
-    slug = re.sub(r"-+", "-", slug)
-    return slug[:65]
-
-
-def post_exists(slug, posts_path):
-    with open(posts_path, "r", encoding="utf-8") as f:
-        return f'slug: "{slug}"' in f.read()
-
-
-# ── Write to posts.ts ─────────────────────────────────────────────────────────
-
-def append_post(post, posts_path):
-    with open(posts_path, "r", encoding="utf-8") as f:
-        src = f.read()
-
-    title_escaped = post["title"].replace("\\", "\\\\").replace('"', '\\"')
-    desc_escaped = post["description"].replace("\\", "\\\\").replace('"', '\\"')
-    img_escaped = post.get("image", "").replace("\\", "\\\\")
-
-    new_entry = f"""  {{
-    slug: "{post["slug"]}",
-    title: "{title_escaped}",
-    description: "{desc_escaped}",
-    publishedAt: "{post["publishedAt"]}",
-    category: "{post["category"]}",
-    readTime: "{post["readtime"]}",
-    image: "{img_escaped}",
-    content: `
-{post["content"]}
-`,
-  }},"""
-
-    # Insert before the closing ]; of the posts array
-    marker = "];\n\nexport function getAllPosts"
-    if marker in src:
-        src = src.replace(marker, new_entry + "\n" + marker)
-    else:
-        # fallback: find last ]; in file
-        pos = src.rfind("];")
-        if pos == -1:
-            raise ValueError("Cannot find insertion point in posts.ts")
-        src = src[:pos] + new_entry + "\n" + src[pos:]
-
-    with open(posts_path, "w", encoding="utf-8") as f:
-        f.write(src)
-
-    print(f"✅ Published: {post['slug']}")
-
-
-# ── Google Indexing API ───────────────────────────────────────────────────────
-
-def get_indexing_token(service_account_json: str) -> str:
-    """Get OAuth2 access token from service account credentials."""
+def get_trending_topics() -> list[dict[str, str]]:
+    if TrendReq is None:
+        return []
+    selected = random.choice(KEYWORDS)
+    collected: list[dict[str, str]] = []
     try:
-        from google.oauth2 import service_account
-        import google.auth.transport.requests
-
-        info = json.loads(service_account_json)
-        credentials = service_account.Credentials.from_service_account_info(
-            info,
-            scopes=["https://www.googleapis.com/auth/indexing"],
-        )
-        credentials.refresh(google.auth.transport.requests.Request())
-        return credentials.token
-    except Exception as e:
-        print(f"⚠️  Could not get indexing token: {e}")
-        return ""
-
-
-def ping_google_indexing(url: str, service_account_json: str):
-    """Notify Google Indexing API about a URL update."""
-    token = get_indexing_token(service_account_json)
-    if not token:
-        return
-
-    try:
-        res = requests.post(
-            "https://indexing.googleapis.com/v3/urlNotifications:publish",
-            headers={
-                "Authorization": f"Bearer {token}",
-                "Content-Type": "application/json",
-            },
-            json={"url": url, "type": "URL_UPDATED"},
-            timeout=15,
-        )
-        if res.status_code == 200:
-            print(f"✅ Indexing requested: {url}")
-        else:
-            print(f"⚠️  Indexing API response {res.status_code}: {res.text[:200]}")
-    except Exception as e:
-        print(f"⚠️  Indexing ping failed: {e}")
+        trends = TrendReq(hl="en-IN", tz=330, timeout=(10, 30), retries=2)
+        trends.build_payload(selected, cat=0, timeframe="now 7-d", geo="IN")
+        related = trends.related_queries()
+        for keyword in selected:
+            result = related.get(keyword) or {}
+            for kind in ("rising", "top"):
+                frame = result.get(kind)
+                if frame is None or frame.empty:
+                    continue
+                for _, row in frame.head(5).iterrows():
+                    query = str(row["query"]).strip()
+                    if len(query) >= 12:
+                        collected.append(
+                            {
+                                "topic": query,
+                                "primaryQuery": query,
+                                "baseKeyword": keyword,
+                                "category": detect_category(f"{query} {keyword}"),
+                                "source": "Google Trends topic discovery",
+                            }
+                        )
+        time.sleep(1)
+    except Exception as error:
+        print(f"Topic discovery warning: {error}", file=sys.stderr)
+    return collected
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
+def topic_candidate(topic: str, query: str, category: str) -> dict[str, object]:
+    return {
+        "slug": re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", query.lower())).strip("-")[:70],
+        "title": topic,
+        "primaryQuery": query,
+        "searchIntent": "informational",
+        "category": category,
+        "body": "",
+        "headings": [],
+    }
 
-def main():
-    anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
-    unsplash_key = os.environ.get("UNSPLASH_ACCESS_KEY", "")
-    indexing_key = os.environ.get("GOOGLE_INDEXING_KEY", "")
 
-    if not anthropic_key:
-        raise SystemExit("❌ ANTHROPIC_API_KEY not set")
-
-    if anthropic is None:
-        raise SystemExit("❌ anthropic package not installed")
-
-    posts_path = os.path.normpath(
-        os.path.join(os.path.dirname(__file__), "..", "lib", "blog", "posts.ts")
-    )
-    print(f"📄 Posts file: {posts_path}")
-
-    # Get trending topics
-    print("🔍 Fetching Google Trends...")
-    trending = get_trending_topics()
-
-    # Build candidate list: trending first, then fallbacks
-    candidates = [(t["query"], t["base_keyword"], None) for t in trending]
-    random.shuffle(FALLBACK_TOPICS)
-    candidates += [(topic, kw, cat) for topic, kw, cat in FALLBACK_TOPICS]
-
-    client = anthropic.Anthropic(api_key=anthropic_key)
-
-    for topic, base_keyword, _ in candidates[:8]:
-        print(f"\n📝 Topic: {topic}")
-
-        try:
-            response_text, category = generate_blog(topic, base_keyword, client)
-            metadata, content = parse_response(response_text)
-
-            if not metadata.get("title") or not content or len(content) < 500:
-                print("⚠️  Incomplete response, skipping...")
-                continue
-
-            slug = metadata.get("slug") or make_slug(metadata.get("title", topic))
-            slug = make_slug(slug)  # re-sanitize
-
-            if post_exists(slug, posts_path):
-                print(f"⚠️  '{slug}' already exists, trying next...")
-                continue
-
-            # Fetch image
-            image_query = f"{base_keyword} marketing digital business"
-            image_url = get_unsplash_image(image_query, unsplash_key)
-            if image_url:
-                print(f"🖼️  Image: {image_url[:70]}...")
-            else:
-                print("⚠️  No image found")
-
-            post = {
-                "slug": slug,
-                "title": metadata.get("title", topic),
-                "description": metadata.get("description", ""),
-                "publishedAt": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-                "category": metadata.get("category", category),
-                "readtime": metadata.get("readtime", metadata.get("read_time", "6 min read")),
-                "image": image_url,
-                "content": content,
-            }
-
-            append_post(post, posts_path)
-            print(f"\n🎉 Done! Blog published: \"{post['title']}\"")
-            print(f"   Slug: /blog/{slug}")
-            print(f"   Category: {post['category']}")
-            print(f"   Date: {post['publishedAt']}")
-
-            # Ping Google Indexing API
-            if indexing_key:
-                blog_url = f"https://technocratsdigimate.com/blog/{slug}"
-                ping_google_indexing(blog_url, indexing_key)
-                ping_google_indexing("https://technocratsdigimate.com/blog", indexing_key)
-            else:
-                print("⚠️  GOOGLE_INDEXING_KEY not set — skipping indexing ping")
-
-            return  # success — stop
-
-        except Exception as e:
-            print(f"❌ Error: {e}")
-            import traceback
-            traceback.print_exc()
-            time.sleep(3)
+def choose_differentiated_topic(
+    pending_path: Path | None,
+) -> tuple[dict[str, str] | None, list[dict[str, object]]]:
+    config = load_json(CONFIG_PATH, {})
+    records = existing_articles() + pending_topics(pending_path)
+    discovered = get_trending_topics()
+    fallback = [
+        {
+            "topic": topic,
+            "primaryQuery": query,
+            "baseKeyword": query,
+            "category": category,
+            "source": "approved evergreen fallback",
+        }
+        for topic, query, category in FALLBACK_TOPICS
+    ]
+    candidates = discovered + fallback
+    skips: list[dict[str, object]] = []
+    seen: set[str] = set()
+    for candidate in candidates:
+        key = normalize_text(candidate["primaryQuery"])
+        if key in seen:
             continue
+        seen.add(key)
+        collision = collision_report(
+            topic_candidate(
+                candidate["topic"],
+                candidate["primaryQuery"],
+                candidate["category"],
+            ),
+            records,
+            config,
+        )
+        if collision:
+            skips.append(
+                {
+                    "topic": candidate["topic"],
+                    "reason": "topic-cluster collision",
+                    "collision": collision,
+                }
+            )
+            continue
+        return candidate, skips
+    return None, skips
 
-    print("❌ Could not generate any blog post in this run.")
+
+def generation_prompt(topic: dict[str, str]) -> str:
+    today = datetime.now(timezone.utc).date().isoformat()
+    return f"""Draft an article for this approved topic:
+Topic: {topic['topic']}
+Primary query: {topic['primaryQuery']}
+Category: {topic['category']}
+Audience: Indian business owners and performance marketers
+Date: {today}
+
+Return all fields:
+slug, title, metaTitle, metaDescription, primaryQuery, searchIntent, category,
+author, reviewer, datePublished, dateModified, summary, body, sources, faq,
+checklist, relatedContent, ctaType, generationMethod, qualityChecks,
+publicationMode, monetisationEligible, adEligible, status, image.
+
+Use author "Gautam Punj", reviewer "Automated editorial gates", status "draft",
+generationMethod "AI-assisted draft with automated source and policy validation",
+and image "/opengraph-image". qualityChecks may contain {{"pending": true}}.
+Sources need id, title, publisher and url. Use at least two official sources.
+"""
+
+
+def generate_candidate(topic: dict[str, str], api_key: str) -> dict[str, object]:
+    if anthropic is None:
+        raise RuntimeError("anthropic package is not installed")
+    client = anthropic.Anthropic(api_key=api_key)
+    response = client.messages.create(
+        model=os.environ.get("AUTO_BLOG_MODEL", "claude-sonnet-4-6"),
+        max_tokens=5000,
+        system=SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": generation_prompt(topic)}],
+    )
+    raw = response.content[0].text.strip()
+    if raw.startswith("```"):
+        raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw)
+    return json.loads(raw)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--pending-prs", type=Path)
+    parser.add_argument("--topic-only", action="store_true")
+    args = parser.parse_args()
+
+    topic, skips = choose_differentiated_topic(args.pending_prs)
+    if topic is None:
+        summary = {
+            "status": "skipped",
+            "reason": "No sufficiently differentiated topic was available.",
+            "skippedTopics": skips,
+        }
+        write_json(args.output, summary)
+        print(json.dumps(summary, ensure_ascii=False, indent=2))
+        return 4
+
+    if args.topic_only:
+        write_json(args.output, topic)
+        print(json.dumps(topic, ensure_ascii=False, indent=2))
+        return 0
+
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    if not api_key:
+        raise SystemExit("ANTHROPIC_API_KEY is required for generation")
+    article = generate_candidate(topic, api_key)
+    article["topicDiscovery"] = {
+        "source": topic["source"],
+        "query": topic["primaryQuery"],
+    }
+    write_json(args.output, article)
+    print(f"Candidate drafted: {article.get('slug')}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

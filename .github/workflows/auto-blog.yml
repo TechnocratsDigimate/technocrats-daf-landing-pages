@@ -1,52 +1,135 @@
-name: Auto Blog Publisher
+name: Guarded automatic blog publisher
 
 on:
   schedule:
-    # Every 6 hours: 00:00, 06:00, 12:00, 18:00 UTC
-    - cron: "0 0,6,12,18 * * *"
-  workflow_dispatch: # allow manual trigger from GitHub UI
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: guarded-auto-blog
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 jobs:
-  publish-blog:
+  generate-validate-publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    permissions:
-      contents: write
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ secrets.AUTO_BLOG_GITHUB_TOKEN }}
+      AUTO_BRANCH: automation/blog-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          token: ${{ secrets.AUTO_BLOG_GITHUB_TOKEN }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: "pip"
+          cache: pip
           cache-dependency-path: scripts/requirements.txt
 
-      - name: Install dependencies
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Install topic and generation dependencies
         run: pip install -r scripts/requirements.txt
 
-      - name: Run auto-blog script
+      - name: Collect pending automation topics
+        run: |
+          mkdir -p .automation
+          gh pr list --state open --json title,headRefName > .automation/pending-prs.json
+
+      - name: Discover topic and generate structured candidate
+        id: generate
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
-          GOOGLE_INDEXING_KEY: ${{ secrets.GOOGLE_INDEXING_KEY }}
-        run: python scripts/auto-blog.py
-
-      - name: Commit and push if blog was added
         run: |
-          git config user.name "Auto Blog Bot"
-          git config user.email "bot@technocratsdigimate.com"
-          git add lib/blog/posts.ts
-          if git diff --staged --quiet; then
-            echo "No new blog post generated."
-          else
-            TITLE=$(git diff --staged lib/blog/posts.ts | grep '^\+.*title:' | head -1 | sed 's/.*title: "//' | sed 's/".*//')
-            git commit -m "auto: publish blog — ${TITLE:-new post}"
-            git push
-            echo "✅ Blog pushed to GitHub — Hostinger will auto-deploy."
+          set +e
+          python scripts/auto-blog.py \
+            --output .automation/candidate.json \
+            --pending-prs .automation/pending-prs.json
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" -eq 4 ]; then
+            echo "No differentiated topic was available; this run is a successful skip." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
           fi
+          exit "$code"
+
+      - name: Validate candidate, sources, claims and originality
+        if: steps.generate.outputs.exit_code == '0'
+        id: validate
+        run: |
+          set +e
+          python scripts/blog_pipeline.py \
+            --candidate .automation/candidate.json \
+            --pending-prs .automation/pending-prs.json
+          code=$?
+          mode=$(node -p "require('./.automation/summary.json').publicationMode")
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          cat .automation/summary.json >> "$GITHUB_STEP_SUMMARY"
+          if [ "$code" -eq 2 ]; then
+            exit 2
+          fi
+          exit 0
+
+      - name: Create isolated automation branch
+        if: steps.generate.outputs.exit_code == '0' && steps.validate.outputs.exit_code != '2'
+        run: git switch -c "$AUTO_BRANCH"
+
+      - name: Run every quality and technical gate
+        if: steps.generate.outputs.exit_code == '0' && steps.validate.outputs.exit_code != '2'
+        run: npm run quality
+
+      - name: Record successful automatic publication
+        if: steps.validate.outputs.mode == 'automatic'
+        run: node scripts/record-publication.mjs
+
+      - name: Commit one traceable article change
+        if: steps.generate.outputs.exit_code == '0' && steps.validate.outputs.exit_code != '2'
+        run: |
+          git config user.name "Guarded Blog Automation"
+          git config user.email "bot@technocratsdigimate.com"
+          git add content/blog
+          git commit -m "auto-blog: $(node -p "require('./.automation/summary.json').slug")"
+          git push origin "$AUTO_BRANCH"
+
+      - name: Create pull request
+        if: steps.generate.outputs.exit_code == '0' && steps.validate.outputs.exit_code != '2'
+        id: pr
+        run: |
+          mode="${{ steps.validate.outputs.mode }}"
+          draft_flag=""
+          if [ "$mode" = "manual-review" ]; then
+            draft_flag="--draft"
+          fi
+          url=$(gh pr create \
+            --base main \
+            --head "$AUTO_BRANCH" \
+            --title "Auto blog: $(node -p "require('./.automation/summary.json').topic")" \
+            --body-file .automation/summary.json \
+            $draft_flag)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Automatically merge only a fully validated automatic article
+        if: steps.validate.outputs.mode == 'automatic'
+        run: gh pr merge "${{ steps.pr.outputs.url }}" --auto --squash --delete-branch
+
+      - name: Preserve manual-review article as an unmerged draft
+        if: steps.validate.outputs.mode == 'manual-review'
+        run: |
+          echo "Sensitive or uncertain content was routed to an unmerged draft PR." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Remove an orphan branch when pull-request creation fails
+        if: failure() && steps.pr.outcome == 'failure'
+        run: git push origin --delete "$AUTO_BRANCH" || true

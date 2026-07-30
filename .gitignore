@@ -3,8 +3,17 @@
 
 # next.js build output
 /.next/
+/.automation/
+/artifacts/
 /out/
 /dist/
+
+# Python test/build output
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+coverage.xml
 
 # local environment — never commit these
 .env

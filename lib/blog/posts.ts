@@ -1,12 +1,30 @@
+import { getAutomatedPosts } from "@/lib/blog/automated";
+
 export type BlogPost = {
   slug: string;
   title: string;
+  metaTitle?: string;
   description: string;
   publishedAt: string;
+  updatedAt?: string;
   category: string;
   readTime: string;
   image?: string;
   content: string;
+  author?: string;
+  reviewer?: string;
+  sources?: Array<{
+    id: string;
+    title: string;
+    publisher: string;
+    url: string;
+  }>;
+  primaryQuery?: string;
+  searchIntent?: string;
+  generationMethod?: string;
+  publicationMode?: "automatic" | "manual-review";
+  monetisationEligible?: boolean;
+  adEligible?: boolean;
 };
 
 export const posts: BlogPost[] = [
@@ -6134,15 +6152,15 @@ Want to see how this applies to your specific business? [Book a free growth audi
 ];
 
 export function getPostBySlug(slug: string): BlogPost | undefined {
-  return posts.find((p) => p.slug === slug);
+  return getAllPosts().find((p) => p.slug === slug);
 }
 
 export function getAllPosts(): BlogPost[] {
-  return [...posts].sort(
+  return [...posts, ...getAutomatedPosts()].sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
 }
 
 export function getPostsByCategory(category: string): BlogPost[] {
-  return posts.filter((p) => p.category === category);
+  return getAllPosts().filter((p) => p.category === category);
 }
