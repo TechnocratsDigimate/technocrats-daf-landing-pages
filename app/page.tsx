@@ -1,19 +1,7 @@
 import type { Metadata } from "next";
 import { BrandHeader } from "@/components/BrandHeader";
 import { Footer } from "@/components/Footer";
-import { HeroSection } from "@/components/home/HeroSection";
-import { TwoPathSection } from "@/components/home/TwoPathSection";
-import { ProblemSection } from "@/components/home/ProblemSection";
-import { SystemFlowSection } from "@/components/home/SystemFlowSection";
-import { ServicesSection } from "@/components/home/ServicesSection";
-import { IndustriesSection } from "@/components/home/IndustriesSection";
-import { ProofSection } from "@/components/home/ProofSection";
-import { PmskTeaser } from "@/components/home/PmskTeaser";
-import { ResourcesStrip } from "@/components/home/ResourcesStrip";
-import { AuditCtaSection } from "@/components/home/AuditCtaSection";
-import { FounderSection } from "@/components/home/FounderSection";
-import { FaqAccordion } from "@/components/home/FaqAccordion";
-import { FooterCtaSection } from "@/components/home/FooterCtaSection";
+import { HomepageV2 } from "@/components/home/HomepageV2";
 
 export const metadata: Metadata = {
   title: "Performance Marketing Agency India — Predictable Lead Generation | Technocrats Digimate",
@@ -83,19 +71,7 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <BrandHeader />
-      <HeroSection />
-      <TwoPathSection />
-      <ProblemSection />
-      <SystemFlowSection />
-      <ServicesSection />
-      <IndustriesSection />
-      <ProofSection />
-      <PmskTeaser />
-      <ResourcesStrip />
-      <AuditCtaSection />
-      <FounderSection />
-      <FaqAccordion />
-      <FooterCtaSection />
+      <HomepageV2 />
       <Footer />
     </>
   );
