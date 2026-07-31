@@ -2,140 +2,102 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const NAV_LINKS = [
-  { label: "Services",     href: "/services/performance-marketing-lead-generation" },
-  { label: "Case Studies", href: "/#proof" },
-  { label: "Blog",         href: "/blog" },
-  { label: "Resources",    href: "/resources" },
+  { label: "Services", href: "/services/performance-marketing-lead-generation" },
+  { label: "Learning Hub", href: "/blog" },
+  { label: "Resources", href: "/resources" },
+  { label: "Courses", href: "/courses" }
 ];
 
-const CTA = { label: "Book Free Audit", href: "/free-growth-audit" };
+function BrandWordmark() {
+  return (
+    <span className="flex items-center gap-3">
+      <span aria-hidden="true" className="grid h-9 w-9 place-items-center rounded-lg bg-signal text-sm font-black text-white">TD</span>
+      <span className="leading-none">
+        <span className="block text-sm font-black tracking-tight text-ink">Technocrats</span>
+        <span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.2em] text-slate">Digimate</span>
+      </span>
+    </span>
+  );
+}
 
 export function BrandHeader() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [consentActive, setConsentActive] = useState(false);
 
-  function isActive(href: string) {
-    return pathname === href;
-  }
+  useEffect(() => {
+    function handleConsentVisibility(event: Event) {
+      const visible = (event as CustomEvent<{ visible?: boolean }>).detail?.visible === true;
+      setConsentActive(visible);
+      if (visible) setMenuOpen(false);
+    }
 
-  function closeMenu() {
-    setMenuOpen(false);
-  }
+    window.addEventListener("td-consent-visibility-changed", handleConsentVisibility);
+    return () => window.removeEventListener("td-consent-visibility-changed", handleConsentVisibility);
+  }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.dispatchEvent(new CustomEvent("td-mobile-menu-visibility-changed", { detail: { visible: true } }));
+
+    function closeWithEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") setMenuOpen(false);
+    }
+
+    window.addEventListener("keydown", closeWithEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeWithEscape);
+      window.dispatchEvent(new CustomEvent("td-mobile-menu-visibility-changed", { detail: { visible: false } }));
+    };
+  }, [menuOpen]);
 
   return (
-    <header className="absolute left-0 right-0 top-0 z-20 border-b border-white/10 bg-ink/82 backdrop-blur-xl">
-      {/* ── Main bar ────────────────────────────────────────────────────── */}
-      <div className="mx-auto flex min-h-[72px] max-w-[1320px] items-center justify-between px-5 py-3 md:min-h-[82px] md:px-8 lg:px-10">
-
-        {/* Logo */}
-        <Link href="/" onClick={closeMenu}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            alt="Technocrats Digimate"
-            className="h-9 w-auto shrink-0 sm:h-10 md:h-11"
-            src="/assets/brand/wide-logo.svg"
-          />
-        </Link>
-
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Main navigation">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`group relative px-3.5 py-2 text-sm font-medium transition-colors duration-200 ${
-                isActive(link.href) ? "text-gold" : "text-slate-400 hover:text-white"
-              }`}
-            >
-              {link.label}
-              {/* Sliding underline */}
-              <span
-                className={`absolute inset-x-3.5 bottom-0 h-px bg-gold transition-all duration-300 ${
-                  isActive(link.href) ? "opacity-100" : "opacity-0 group-hover:opacity-60"
-                }`}
-              />
-            </Link>
-          ))}
+    <header className="sticky top-0 z-40 border-b border-line bg-white/95 backdrop-blur">
+      <div className="mx-auto flex min-h-[72px] max-w-[1240px] items-center justify-between px-5 md:px-8">
+        <Link aria-label="Technocrats Digimate home" className="min-h-11 py-1" href="/"><BrandWordmark /></Link>
+        <nav aria-label="Primary navigation" className="hidden items-center gap-7 md:flex">
+          {NAV_LINKS.map((link) => {
+            const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+            return (
+              <Link className={`min-h-11 border-b-2 px-1 py-3 text-sm font-bold transition ${active ? "border-signal text-ink" : "border-transparent text-slate hover:text-ink"}`} href={link.href} key={link.href}>
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
-
-        {/* Desktop CTA + mobile hamburger */}
-        <div className="flex items-center gap-3">
-          {/* CTA — desktop only */}
-          <Link
-            href={CTA.href}
-            className="hidden rounded-md bg-gold px-4 py-2 text-sm font-semibold text-ink transition-all duration-200 hover:bg-gold-soft hover:shadow-[0_0_16px_rgba(214,168,79,0.3)] md:inline-block"
-          >
-            {CTA.label} →
+        <div className="flex items-center gap-2">
+          <Link className="hidden min-h-11 items-center rounded-lg bg-signal px-5 text-sm font-bold text-white transition hover:bg-signal-dark md:inline-flex" data-cta-id="header-growth-audit" href="/free-growth-audit">
+            Book a Growth Audit
           </Link>
-
-          {/* Hamburger — mobile only */}
           <button
-            type="button"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-controls="mobile-navigation"
             aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((o) => !o)}
-            className="flex h-9 w-9 items-center justify-center rounded-md border border-white/10 text-slate-400 transition-colors duration-200 hover:border-white/25 hover:text-white md:hidden"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            className="grid h-11 w-11 place-items-center rounded-lg border border-line text-ink disabled:cursor-not-allowed disabled:opacity-40 md:hidden"
+            disabled={consentActive}
+            onClick={() => setMenuOpen((open) => !open)}
+            type="button"
           >
-            {/* Hamburger / close icon */}
-            <svg
-              className={`h-5 w-5 transition-transform duration-300 ${menuOpen ? "rotate-90" : "rotate-0"}`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              {menuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
-              )}
-            </svg>
+            <span aria-hidden="true" className="text-xl">{menuOpen ? "\u00D7" : "\u2630"}</span>
           </button>
         </div>
       </div>
-
-      {/* ── Mobile menu ──────────────────────────────────────────────────── */}
-      <div
-        className={`overflow-hidden border-b border-white/10 bg-ink/95 backdrop-blur-xl transition-all duration-300 ease-out md:hidden ${
-          menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-        }`}
-        aria-hidden={!menuOpen}
-      >
-        <nav className="mx-auto max-w-[1320px] px-5 pb-5 pt-2" aria-label="Mobile navigation">
-          <ul className="space-y-1">
+      {menuOpen && (
+        <nav aria-label="Mobile navigation" className="border-t border-line bg-white px-5 pb-5 md:hidden" id="mobile-navigation">
+          <div className="mx-auto max-w-[1240px] pt-3">
             {NAV_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  onClick={closeMenu}
-                  className={`flex items-center justify-between rounded-lg px-4 py-3 text-sm font-medium transition-colors duration-200 ${
-                    isActive(link.href)
-                      ? "bg-gold/10 text-gold"
-                      : "text-slate-300 hover:bg-white/[0.04] hover:text-white"
-                  }`}
-                >
-                  {link.label}
-                  {isActive(link.href) && (
-                    <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-                  )}
-                </Link>
-              </li>
+              <Link className="flex min-h-12 items-center border-b border-line text-base font-bold text-ink" href={link.href} key={link.href} onClick={() => setMenuOpen(false)}>{link.label}</Link>
             ))}
-          </ul>
-
-          {/* Mobile CTA */}
-          <Link
-            href={CTA.href}
-            onClick={closeMenu}
-            className="mt-3 block rounded-md bg-gold px-4 py-3 text-center text-sm font-semibold text-ink transition-all duration-200 hover:bg-gold-soft"
-          >
-            {CTA.label} →
-          </Link>
+            <Link className="mt-4 flex min-h-12 items-center justify-center rounded-lg bg-signal px-5 font-bold text-white" data-cta-id="mobile-header-growth-audit" href="/free-growth-audit" onClick={() => setMenuOpen(false)}>Book a Growth Audit</Link>
+          </div>
         </nav>
-      </div>
+      )}
     </header>
   );
 }

@@ -1,0 +1,35 @@
+{
+  "minimumHoursBetweenAutomaticPublications": 48,
+  "maximumAutomaticPublicationsPerRollingWindow": 3,
+  "rollingWindowDays": 7,
+  "maximumTitleSimilarity": 0.72,
+  "maximumBodySimilarity": 0.62,
+  "maximumHeadingOverlap": 0.55,
+  "minimumSources": 2,
+  "minimumInternalLinks": 2,
+  "minimumChecklistItems": 3,
+  "allowedAutomaticSourceDomains": [
+    "developers.google.com",
+    "support.google.com",
+    "business.google.com",
+    "facebook.com",
+    "developers.facebook.com",
+    "about.fb.com",
+    "meity.gov.in",
+    "gov.in"
+  ],
+  "commercialComparisonTerms": [
+    "best tool",
+    "cheapest",
+    "pricing comparison",
+    "versus pricing",
+    "replace your stack"
+  ],
+  "sensitiveAdviceTerms": [
+    "legal advice",
+    "financial advice",
+    "tax advice",
+    "investment advice",
+    "medical advice"
+  ]
+}

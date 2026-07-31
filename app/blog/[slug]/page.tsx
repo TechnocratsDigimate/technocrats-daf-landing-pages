@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : [{ url: "/assets/brand/og-blog.png", width: 1200, height: 630, alt: post.title }];
 
   return {
-    title: `${post.title} | Technocrats Digimate`,
+    title: post.metaTitle || `${post.title} | Technocrats Digimate`,
     description: post.description,
     alternates: { canonical: `https://technocratsdigimate.com/blog/${slug}` },
     openGraph: {
@@ -30,6 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: "Technocrats Digimate",
       type: "article",
       publishedTime: post.publishedAt,
+      modifiedTime: post.updatedAt || post.publishedAt,
       images: ogImages,
     },
     twitter: { card: "summary_large_image", title: post.title, description: post.description, images: ogImages.map(i => i.url) },
@@ -41,6 +42,47 @@ function formatDate(dateStr: string) {
     day: "numeric",
     month: "long",
     year: "numeric",
+  });
+}
+
+function isSafeHref(href: string) {
+  return (href.startsWith("/") && !href.startsWith("//")) || href.startsWith("https://");
+}
+
+function safeJsonLd(value: unknown) {
+  return JSON.stringify(value)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
+}
+
+function renderInline(text: string) {
+  const tokenPattern = /(\[[^\]]+\]\((?:https?:\/\/|\/)[^)]+\)|\*\*[^*]+\*\*|`[^`]+`)/g;
+  return text.split(tokenPattern).filter(Boolean).map((token, index) => {
+    const link = token.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (link && isSafeHref(link[2])) {
+      const external = link[2].startsWith("http");
+      return (
+        <a
+          className="font-semibold text-signal underline decoration-signal/30 underline-offset-4 hover:decoration-signal"
+          href={link[2]}
+          key={`${token}-${index}`}
+          rel={external ? "noreferrer" : undefined}
+          target={external ? "_blank" : undefined}
+        >
+          {link[1]}
+        </a>
+      );
+    }
+    if (token.startsWith("**") && token.endsWith("**")) {
+      return <strong className="text-ink" key={`${token}-${index}`}>{token.slice(2, -2)}</strong>;
+    }
+    if (token.startsWith("`") && token.endsWith("`")) {
+      return <code className="rounded bg-mist px-1.5 py-0.5 text-sm text-ink" key={`${token}-${index}`}>{token.slice(1, -1)}</code>;
+    }
+    return token;
   });
 }
 
@@ -129,7 +171,7 @@ function renderContent(content: string) {
           {listLines.map((item, li) => (
             <li key={li} className="flex gap-2 text-slate-300">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
-              <span dangerouslySetInnerHTML={{ __html: item.replace(/\*\*(.*?)\*\*/g, "<strong class='text-white'>$1</strong>") }} />
+              <span>{renderInline(item)}</span>
             </li>
           ))}
         </ul>
@@ -146,7 +188,7 @@ function renderContent(content: string) {
           {listLines.map((item, li) => (
             <li key={li} className="flex gap-3 text-slate-300">
               <span className="shrink-0 font-bold text-gold">{li + 1}.</span>
-              <span dangerouslySetInnerHTML={{ __html: item.replace(/\*\*(.*?)\*\*/g, "<strong class='text-white'>$1</strong>") }} />
+              <span>{renderInline(item)}</span>
             </li>
           ))}
         </ol>
@@ -158,16 +200,9 @@ function renderContent(content: string) {
       // skip blank lines
     } else {
       elements.push(
-        <p
-          key={i}
-          className="my-4 leading-8 text-slate-300"
-          dangerouslySetInnerHTML={{
-            __html: line
-              .replace(/\*\*(.*?)\*\*/g, "<strong class='text-white'>$1</strong>")
-              .replace(/\*(.*?)\*/g, "<em>$1</em>")
-              .replace(/`(.*?)`/g, "<code class='rounded bg-white/10 px-1.5 py-0.5 text-sm text-gold font-mono'>$1</code>"),
-          }}
-        />
+        <p key={i} className="my-4 leading-8 text-slate-300">
+          {renderInline(line)}
+        </p>
       );
     }
     i++;
@@ -190,12 +225,12 @@ export default async function BlogPostPage({ params }: Props) {
     headline: post.title,
     description: post.description,
     datePublished: post.publishedAt,
-    dateModified: post.publishedAt,
+    dateModified: post.updatedAt || post.publishedAt,
     image: post.image || "https://technocratsdigimate.com/assets/brand/og-blog.png",
     author: {
       "@type": "Person",
-      name: "Gautam Punj",
-      url: "https://technocratsdigimate.com",
+      name: post.author || "Gautam Punj",
+      url: "https://technocratsdigimate.com/about",
     },
     publisher: {
       "@type": "Organization",
@@ -227,11 +262,11 @@ export default async function BlogPostPage({ params }: Props) {
     <div className="min-h-screen bg-ink text-white">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(articleSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
       />
       <BrandHeader />
 
@@ -253,7 +288,10 @@ export default async function BlogPostPage({ params }: Props) {
             <span>·</span>
             <span>{post.readTime}</span>
             <span>·</span>
-            <span>By Gautam Punj</span>
+            <span>By {post.author || "Gautam Punj"}</span>
+            {post.updatedAt && post.updatedAt !== post.publishedAt && (
+              <span>Updated {formatDate(post.updatedAt)}</span>
+            )}
           </div>
           <h1 className="text-3xl font-bold leading-tight text-white md:text-4xl">
             {post.title}
@@ -264,9 +302,14 @@ export default async function BlogPostPage({ params }: Props) {
         {/* Hero image */}
         {post.image && (
           <div className="mb-10 overflow-hidden rounded-2xl">
+            {/* Structured automation accepts approved remote primary artwork; dimensions reserve layout space. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={post.image}
               alt={post.title}
+              height={720}
+              loading="lazy"
+              width={1080}
               className="w-full object-cover"
               style={{ maxHeight: "420px" }}
             />
@@ -277,6 +320,31 @@ export default async function BlogPostPage({ params }: Props) {
         <div className="prose-custom">
           {renderContent(post.content)}
         </div>
+
+        {post.generationMethod && (
+          <aside className="mt-10 rounded-xl border border-line bg-mist p-5 text-sm leading-6 text-slate">
+            <strong className="text-ink">AI-assisted content disclosure:</strong>{" "}
+            This article was created with AI assistance and passed automated editorial,
+            source, duplication and technical checks. Automated validation is not presented
+            as human fact-checking.
+          </aside>
+        )}
+
+        {post.sources && post.sources.length > 0 && (
+          <section className="mt-12" aria-labelledby="article-sources">
+            <h2 className="text-2xl font-bold text-white" id="article-sources">Sources</h2>
+            <ol className="mt-5 space-y-3">
+              {post.sources.map((source) => (
+                <li className="text-sm text-slate-300" id={`source-${source.id}`} key={source.id}>
+                  <a className="font-semibold text-gold underline underline-offset-4" href={source.url} rel="noreferrer" target="_blank">
+                    {source.title}
+                  </a>{" "}
+                  — {source.publisher}
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
 
         {/* CTA */}
         <div className="mt-16 rounded-2xl border border-gold/20 bg-gold/5 p-8 text-center">
