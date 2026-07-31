@@ -9,6 +9,13 @@ import {
   type TrackingConsentChoice
 } from "@/lib/tracking";
 
+function restoreFocusAfterDialog(returnTarget: HTMLElement | null) {
+  window.setTimeout(() => {
+    const fallback = document.querySelector<HTMLElement>('a[aria-label="Technocrats Digimate home"]');
+    (returnTarget?.isConnected ? returnTarget : fallback)?.focus();
+  }, 0);
+}
+
 export function CookieConsentBanner() {
   const [isVisible, setIsVisible] = useState(false);
   const acceptButtonRef = useRef<HTMLButtonElement>(null);
@@ -48,6 +55,22 @@ export function CookieConsentBanner() {
     };
   }, [isVisible]);
 
+  useEffect(() => {
+    if (!isVisible) return;
+
+    function closeWithEscape(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopPropagation();
+      const returnTarget = returnFocusRef.current;
+      setIsVisible(false);
+      restoreFocusAfterDialog(returnTarget);
+    }
+
+    window.addEventListener("keydown", closeWithEscape);
+    return () => window.removeEventListener("keydown", closeWithEscape);
+  }, [isVisible]);
+
   function chooseConsent(choice: TrackingConsentChoice) {
     const previouslyAccepted = getTrackingConsent() === "accepted";
     const returnTarget = returnFocusRef.current;
@@ -57,10 +80,7 @@ export function CookieConsentBanner() {
       window.location.reload();
       return;
     }
-    window.setTimeout(() => {
-      const fallback = document.querySelector<HTMLElement>('a[aria-label="Technocrats Digimate home"]');
-      (returnTarget?.isConnected ? returnTarget : fallback)?.focus();
-    }, 0);
+    restoreFocusAfterDialog(returnTarget);
   }
 
   if (!isVisible) return null;
