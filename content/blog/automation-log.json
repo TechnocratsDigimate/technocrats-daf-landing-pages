@@ -1,3 +1,11 @@
 {
-  "publications": []
+  "publications": [
+    {
+      "contentId": "1f31eb5daabe1122",
+      "slug": "how-to-verify-meta-conversion-tracking-signals",
+      "pullRequest": "https://github.com/TechnocratsDigimate/technocrats-daf-landing-pages/actions/runs/31389257730",
+      "mode": "automatic",
+      "publishedAt": "2026-08-10T12:44:24.773Z"
+    }
+  ]
 }
