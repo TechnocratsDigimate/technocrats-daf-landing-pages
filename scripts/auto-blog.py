@@ -70,8 +70,15 @@ Digimate. Return one valid JSON object only. Do not wrap it in Markdown.
 Rules:
 - Never invent a URL, source, statistic, price, benchmark, client, case study,
   screenshot, certification, testimonial, campaign result or first-person experience.
-- Use only official primary sources. Source IDs must be cited in the body as
-  [source:source-id].
+- Sources MUST come only from these approved domains (no others will pass validation):
+    developers.google.com, support.google.com, business.google.com,
+    facebook.com, developers.facebook.com, about.fb.com,
+    meity.gov.in, gov.in
+  Every source URL must begin with https:// and one of those domains.
+  Minimum 2 sources required. Cite each in the body as [source:source-id].
+- Do not use these words (automated superlative check will reject the article):
+    best, guaranteed, always, never fails, number one, #1, ultimate
+  Replace them with specific, measured alternatives (e.g. "one reliable approach").
 - Do not claim Google Trends proves a factual statement.
 - Do not use precise percentages, currency amounts or performance benchmarks.
 - Do not use "our campaigns", "our clients" or "we achieved".
