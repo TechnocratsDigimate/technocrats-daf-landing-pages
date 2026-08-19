@@ -6,9 +6,9 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { SectionWrapper } from "@/components/ui/SectionWrapper";
 
-const pageTitle = "Performance Marketing & Lead Generation Agency | Technocrats Digimate";
+const pageTitle = "Performance Marketing Agency Chandigarh & Pan India — Lead Generation | Technocrats Digimate";
 const pageDescription =
-  "Technocrats Digimate builds predictable lead-generation systems using Meta Ads, Google Ads, landing pages, conversion tracking, WhatsApp follow-up, CRM visibility, and reporting.";
+  "Technocrats Digimate is a performance marketing agency in Chandigarh serving businesses across India. We build predictable lead-generation systems using Meta Ads, Google Ads, landing pages, conversion tracking, and WhatsApp follow-up.";
 const canonicalUrl =
   "https://technocratsdigimate.com/services/performance-marketing-lead-generation";
 
@@ -114,12 +114,13 @@ export default function PerformanceMarketingLeadGenerationPage() {
                 Performance Marketing
               </span>
               <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight text-white md:text-6xl">
-                Performance Marketing & Lead Generation Agency
+                Performance Marketing Agency — Chandigarh · Tricity · Pan India
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-                We build lead-generation systems that connect paid media, landing pages,
-                tracking, WhatsApp follow-up, CRM visibility, and reporting into one
-                practical growth engine.
+                Based in Chandigarh, serving businesses across Tricity, Punjab, Haryana,
+                and pan India — we build lead-generation systems that connect paid media,
+                landing pages, tracking, WhatsApp follow-up, CRM visibility, and reporting
+                into one practical growth engine.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link

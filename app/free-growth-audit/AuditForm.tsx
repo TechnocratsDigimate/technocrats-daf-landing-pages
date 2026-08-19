@@ -140,10 +140,10 @@ const CONTACT_METHODS = [
 // ─── Input style helpers ───────────────────────────────────────────────────
 
 const inputCls =
-  "w-full rounded-lg border border-white/15 bg-white/[0.05] px-4 py-3 text-sm text-white placeholder-slate-500 transition-all duration-200 focus:border-gold/50 focus:outline-none focus:ring-1 focus:ring-gold/30";
+  "w-full rounded-lg border border-white/20 bg-white/[0.08] px-4 py-3 text-sm text-white placeholder-slate-500 transition-all duration-200 focus:border-gold/50 focus:outline-none focus:ring-1 focus:ring-gold/30";
 
 const selectCls =
-  "w-full appearance-none rounded-lg border border-white/15 bg-[#0d1828] px-4 py-3 text-sm text-white transition-all duration-200 focus:border-gold/50 focus:outline-none focus:ring-1 focus:ring-gold/30 [&>option]:bg-[#0d1828]";
+  "w-full appearance-none rounded-lg border border-white/20 bg-[#0d1828] px-4 py-3 text-sm text-white transition-all duration-200 focus:border-gold/50 focus:outline-none focus:ring-1 focus:ring-gold/30 [&>option]:bg-[#0d1828]";
 
 const errorCls = "mt-1.5 text-xs text-red-400";
 const labelCls = "mb-1.5 block text-sm font-medium text-slate-300";
@@ -485,12 +485,12 @@ export function AuditForm() {
                 className={`flex items-center gap-3 rounded-lg border px-4 py-3 text-left text-sm transition-all duration-200 ${
                   active
                     ? "border-gold/40 bg-gold/10 text-gold"
-                    : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-white/25 hover:text-white"
+                    : "border-white/20 bg-white/[0.07] text-slate-200 hover:border-white/40 hover:bg-white/[0.12] hover:text-white"
                 }`}
               >
                 <div
                   className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border transition-all duration-200 ${
-                    active ? "border-gold bg-gold" : "border-white/30"
+                    active ? "border-gold bg-gold" : "border-white/40"
                   }`}
                 >
                   {active && (
@@ -526,12 +526,12 @@ export function AuditForm() {
                 className={`flex items-center gap-3 rounded-lg border px-4 py-3 text-left text-sm transition-all duration-200 ${
                   active
                     ? "border-gold/40 bg-gold/10 text-gold"
-                    : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-white/25 hover:text-white"
+                    : "border-white/20 bg-white/[0.07] text-slate-200 hover:border-white/40 hover:bg-white/[0.12] hover:text-white"
                 }`}
               >
                 <div
                   className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200 ${
-                    active ? "border-gold" : "border-white/30"
+                    active ? "border-gold" : "border-white/40"
                   }`}
                 >
                   {active && <div className="h-2 w-2 rounded-full bg-gold" />}
@@ -563,12 +563,12 @@ export function AuditForm() {
                 className={`flex items-center gap-2.5 rounded-lg border px-5 py-3 text-sm transition-all duration-200 ${
                   active
                     ? "border-gold/40 bg-gold/10 text-gold"
-                    : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-white/25 hover:text-white"
+                    : "border-white/20 bg-white/[0.07] text-slate-200 hover:border-white/40 hover:bg-white/[0.12] hover:text-white"
                 }`}
               >
                 <div
                   className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200 ${
-                    active ? "border-gold" : "border-white/30"
+                    active ? "border-gold" : "border-white/40"
                   }`}
                 >
                   {active && <div className="h-2 w-2 rounded-full bg-gold" />}
@@ -593,7 +593,7 @@ export function AuditForm() {
         >
           <div
             className={`mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded border transition-all duration-200 ${
-              form.consent ? "border-gold bg-gold" : "border-white/30 bg-transparent"
+              form.consent ? "border-gold bg-gold" : "border-white/40 bg-white/[0.07]"
             }`}
           >
             {form.consent && (

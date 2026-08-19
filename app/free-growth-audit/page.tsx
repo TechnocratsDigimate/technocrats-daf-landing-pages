@@ -165,8 +165,10 @@ export default function FreeGrowthAuditPage() {
       <BrandHeader />
 
       {/* ── Audit Form ───────────────────────────────────────────────────── */}
-      <section id="audit-form" className="bg-ink pt-28 pb-16 md:pb-20">
-        <div className="mx-auto max-w-[1320px] px-5 md:px-8 lg:px-10">
+      <section id="audit-form" className="relative overflow-hidden bg-ink pt-28 pb-16 md:pb-20">
+        <div className="agency-grid absolute inset-0 opacity-20 pointer-events-none" />
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_55%_60%_at_50%_0%,rgba(214,168,79,0.09)_0%,transparent_65%)]" />
+        <div className="relative mx-auto max-w-[1320px] px-5 md:px-8 lg:px-10">
           <div className="mx-auto max-w-2xl">
             <div className="mb-10 text-center">
               <Badge label="Free — No Obligation" variant="gold" />
@@ -178,7 +180,7 @@ export default function FreeGrowthAuditPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm md:p-8">
+            <div className="rounded-2xl border border-white/12 bg-white/[0.05] p-6 shadow-[0_0_40px_rgba(0,0,0,0.4)] backdrop-blur-sm md:p-8">
               <AuditForm />
             </div>
           </div>
